@@ -27,13 +27,13 @@ export interface AppRelease {
 }
 
 export const CURRENT_RELEASE = {
-  version: '1.0.0-preview6',
-  versionCode: 6,
-  name: 'Bax 1.0.0 Preview 6',
+  version: '1.0.0-preview20',
+  versionCode: 20,
+  name: 'Bax 1.0.0 Preview 20',
   releaseDate: 'مهر ۱۴۰۳ / اکتبر ۲۰۲۴',
   repoUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases',
   author: 'mehdi-fakhraei60',
-  notesRaw: `## Bax 1.0.0 preview 6 (نسخه ۶)
+  notesRaw: `## Bax 1.0.0 preview 20 (نسخه ۲۰)
 
 Native Kotlin + Jetpack Compose و وب‌اپلیکیشن PWA. دو اپلیکیشن: **Bax مشتری** (\`ir.dbax.app\`) و **Bax کاپتان** (\`ir.dbax.app.driver\`).
 
@@ -50,8 +50,8 @@ export const APPS: AppRelease[] = [
     nameFa: 'باکس (مشتری)',
     role: 'customer',
     packageName: 'ir.dbax.app',
-    version: '1.0.0-preview6',
-    tag: 'v1.0.0-preview6',
+    version: '1.0.0-preview20',
+    tag: 'v1.0.0-preview20',
     releaseDate: '۱۴۰۳/۰۷/۲۳',
     taglineFa: 'سامانه هوشمند سفارش پیک موتوری، وانت و تحویل تضمینی کالا با نقشه تمام‌صفحه',
     taglineEn: 'Map-first on-demand parcel delivery, live tracking & guaranteed shipments',
@@ -90,8 +90,8 @@ export const APPS: AppRelease[] = [
     nameFa: 'باکس کاپتان (راننده / سفیر)',
     role: 'driver',
     packageName: 'ir.dbax.app.driver',
-    version: '1.0.0-preview6',
-    tag: 'v1.0.0-preview6',
+    version: '1.0.0-preview20',
+    tag: 'v1.0.0-preview20',
     releaseDate: '۱۴۰۳/۰۷/۲۳',
     taglineFa: 'اپلیکیشن اختصاصی کاپتان‌های حمل با کارمزد ۰٪ و درآمد ثابت شیفتی',
     taglineEn: 'Exclusive captain app with 0% commission and 8-hour fixed block earnings',
