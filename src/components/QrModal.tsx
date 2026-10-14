@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Smartphone, Download, ExternalLink, QrCode, Copy, Check, AlertCircle } from 'lucide-react';
+import { X, Smartphone, Download, ExternalLink, QrCode, Copy, Check, AlertCircle, Server, ShieldCheck } from 'lucide-react';
 import { generateQrDataUrl } from '../utils/qr';
 
 interface QrModalProps {
@@ -7,6 +7,7 @@ interface QrModalProps {
   onClose: () => void;
   title?: string;
   url?: string;
+  directUrl?: string;
   fileName?: string;
   arch?: string;
   fileSize?: string;
@@ -17,20 +18,31 @@ export const QrModal: React.FC<QrModalProps> = ({
   onClose,
   title = 'دانلود اپلیکیشن باکس (Bax APK)',
   url,
+  directUrl,
   fileName = 'bax-customer.apk',
   arch = 'Universal (همه پردازنده‌ها)',
-  fileSize = '۳۴ مگابایت',
+  fileSize = '۱۸.۸ مگابایت',
 }) => {
+  // Source toggle: 'local' (internal web server - no 403 / no proxy needed) or 'github' (official releases)
+  const [downloadSource, setDownloadSource] = useState<'local' | 'github'>('local');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Reliable absolute download URL
-  const safeUrl =
+  // Compute absolute URLs for both sources
+  const githubUrl =
     url && url.trim().length > 0
       ? url
-      : 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk';
+      : `https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/${fileName}`;
+
+  const localRelativeUrl = directUrl || `/downloads/${fileName}`;
+  const localFullUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${localRelativeUrl}`
+      : localRelativeUrl;
+
+  const activeUrl = downloadSource === 'local' ? localFullUrl : githubUrl;
 
   useEffect(() => {
     if (!isOpen) {
@@ -43,7 +55,8 @@ export const QrModal: React.FC<QrModalProps> = ({
     setLoading(true);
     setError(null);
 
-    generateQrDataUrl(safeUrl, 260)
+    // Generate QR locally using the local client qrcode library
+    generateQrDataUrl(activeUrl, 260)
       .then((dataUrl) => {
         if (!active) return;
         if (dataUrl) {
@@ -63,17 +76,17 @@ export const QrModal: React.FC<QrModalProps> = ({
     return () => {
       active = false;
     };
-  }, [isOpen, safeUrl]);
+  }, [isOpen, activeUrl]);
 
   if (!isOpen) return null;
 
   const handleCopy = async () => {
     try {
       if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(safeUrl);
+        await navigator.clipboard.writeText(activeUrl);
       } else {
         const textarea = document.createElement('textarea');
-        textarea.value = safeUrl;
+        textarea.value = activeUrl;
         document.body.appendChild(textarea);
         textarea.select();
         document.execCommand('copy');
@@ -117,10 +130,40 @@ export const QrModal: React.FC<QrModalProps> = ({
           </button>
         </div>
 
+        {/* Source Switcher: Local Web Server vs GitHub */}
+        <div className="mt-4 p-1 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setDownloadSource('local')}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+              downloadSource === 'local'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/40'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+          >
+            <Server className="w-3.5 h-3.5 text-emerald-300" />
+            <span>سرور وب (مستقیم و بدون تحریم)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setDownloadSource('github')}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+              downloadSource === 'github'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/40'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+          >
+            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+              <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+            </svg>
+            <span>مخزن رسمی گیت‌هاب</span>
+          </button>
+        </div>
+
         {/* Content */}
-        <div className="py-5 flex flex-col items-center text-center space-y-3">
+        <div className="py-4 flex flex-col items-center text-center space-y-3">
           {/* QR Code Canvas / Image Container */}
-          <div className="p-4 bg-white rounded-2xl shadow-xl shadow-indigo-950/40 border-4 border-indigo-500/20 relative flex items-center justify-center min-w-[200px] min-h-[200px]">
+          <div className="p-4 bg-white rounded-2xl shadow-xl shadow-indigo-950/40 border-4 border-indigo-500/20 relative flex items-center justify-center min-w-[210px] min-h-[210px]">
             {loading ? (
               <div className="flex flex-col items-center justify-center gap-2 p-6 text-slate-600">
                 <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
@@ -146,14 +189,21 @@ export const QrModal: React.FC<QrModalProps> = ({
               <span>دوربین گوشی را روی بارکد بگیرید</span>
             </p>
             <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-              لینک مستقیم فایل نصب APK باز شده و فرآیند دانلود روی گوشی اندروید آغاز می‌گردد ({fileSize}).
+              {downloadSource === 'local' ? (
+                <span className="text-emerald-300 font-medium flex items-center justify-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>دانلود مستقیم و با نهایت سرعت از سرور وب با حجم {fileSize}</span>
+                </span>
+              ) : (
+                <span>لینک رسمی از مخزن گیت‌هاب (v1.0.0-preview20) با حجم {fileSize}</span>
+              )}
             </p>
           </div>
 
           {/* URL Box & Copy */}
           <div className="w-full flex items-center gap-2 bg-slate-950/80 rounded-xl p-2.5 border border-slate-800">
             <div className="flex-1 text-[11px] font-mono text-slate-300 break-all text-left dir-ltr truncate select-all px-1">
-              {safeUrl}
+              {activeUrl}
             </div>
             <button
               onClick={handleCopy}
@@ -171,30 +221,36 @@ export const QrModal: React.FC<QrModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center gap-2 pt-3 border-t border-slate-800">
-          <a
-            href={safeUrl}
-            download={fileName}
-            className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors shadow-lg shadow-indigo-600/30"
-          >
-            <Download className="w-4 h-4" />
-            <span>دانلود مستقیم با مرورگر</span>
-          </a>
-          <a
-            href={safeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-            title="باز کردن لینک مستقیم در تب جدید"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
-          <button
-            onClick={onClose}
-            className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
-          >
-            بستن
-          </button>
+        <div className="flex flex-col gap-2 pt-3 border-t border-slate-800">
+          <div className="flex items-center gap-2">
+            <a
+              href={downloadSource === 'local' ? localRelativeUrl : githubUrl}
+              download={fileName}
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors shadow-lg shadow-indigo-600/30"
+            >
+              <Download className="w-4 h-4" />
+              <span>دانلود فایل {fileName}</span>
+            </a>
+            <a
+              href={downloadSource === 'local' ? localRelativeUrl : githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+              title="باز کردن لینک مستقیم در تب جدید"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+
+          <div className="flex items-center justify-between text-xs text-slate-400 px-1 pt-1">
+            <span className="text-[11px]">نسخه پایدار v1.0.0-preview20</span>
+            <button
+              onClick={onClose}
+              className="py-1 px-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-medium transition-colors"
+            >
+              بستن
+            </button>
+          </div>
         </div>
       </div>
     </div>

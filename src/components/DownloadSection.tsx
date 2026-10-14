@@ -31,6 +31,7 @@ export const DownloadSection: React.FC = () => {
     isOpen: boolean;
     title: string;
     url: string;
+    directUrl?: string;
     fileName: string;
     arch: string;
     fileSize: string;
@@ -38,6 +39,7 @@ export const DownloadSection: React.FC = () => {
     isOpen: false,
     title: '',
     url: '',
+    directUrl: '',
     fileName: '',
     arch: '',
     fileSize: '',
@@ -55,6 +57,7 @@ export const DownloadSection: React.FC = () => {
       isOpen: true,
       title: `${app.nameFa} (${file.arch})`,
       url: file.url,
+      directUrl: file.directUrl,
       fileName: file.fileName,
       arch: file.arch,
       fileSize: file.sizeEst,
@@ -224,7 +227,7 @@ export const DownloadSection: React.FC = () => {
               {/* Card Actions */}
               <div className="space-y-2.5 pt-4 border-t border-slate-800/70">
                 <a
-                  href={currentFile.url}
+                  href={currentFile.directUrl || currentFile.url}
                   download={currentFile.fileName}
                   className={`w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-lg ${
                     isCustomer
@@ -300,6 +303,7 @@ export const DownloadSection: React.FC = () => {
         onClose={() => setModalState((prev) => ({ ...prev, isOpen: false }))}
         title={modalState.title}
         url={modalState.url}
+        directUrl={modalState.directUrl}
         fileName={modalState.fileName}
         arch={modalState.arch}
         fileSize={modalState.fileSize}

@@ -218,7 +218,7 @@ export const CustomerMasterView: React.FC = () => {
             <span className="hidden md:inline">اسکن بارکد دانلود</span>
           </button>
           <a
-            href={activeFile.url}
+            href={activeFile.directUrl || activeFile.url}
             download={activeFile.fileName}
             className="py-2 px-3.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30 hover:bg-indigo-600 hover:text-white text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition-all"
           >
@@ -541,6 +541,7 @@ export const CustomerMasterView: React.FC = () => {
         onClose={() => setQrOpen(false)}
         title={`${customerApp.nameFa} (${activeFile.arch})`}
         url={activeFile.url}
+        directUrl={activeFile.directUrl}
         fileName={activeFile.fileName}
         arch={activeFile.arch}
         fileSize={activeFile.sizeEst}

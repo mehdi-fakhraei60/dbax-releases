@@ -922,7 +922,7 @@ export const CustomerAppSimulator: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <a
-                href={selectedArch === 'arm64' ? customerApp.arm64Apk.url : customerApp.universalApk.url}
+                href={selectedArch === 'arm64' ? (customerApp.arm64Apk.directUrl || customerApp.arm64Apk.url) : (customerApp.universalApk.directUrl || customerApp.universalApk.url)}
                 download={selectedArch === 'arm64' ? customerApp.arm64Apk.fileName : customerApp.universalApk.fileName}
                 className="flex-1 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-600/30"
               >
@@ -3683,6 +3683,11 @@ export const CustomerAppSimulator: React.FC = () => {
           selectedArch === 'arm64'
             ? customerApp.arm64Apk.url
             : customerApp.universalApk.url
+        }
+        directUrl={
+          selectedArch === 'arm64'
+            ? customerApp.arm64Apk.directUrl
+            : customerApp.universalApk.directUrl
         }
         fileName={
           selectedArch === 'arm64'

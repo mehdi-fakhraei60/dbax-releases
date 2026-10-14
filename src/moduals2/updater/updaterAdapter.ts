@@ -82,10 +82,10 @@ export class UpdaterAdapter {
         releaseDateFa,
         downloadUrl:
           remoteData?.artifacts?.customer?.universal?.url ||
-          'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk',
+          'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer.apk',
         arm64DownloadUrl:
           remoteData?.artifacts?.customer?.arm64?.url ||
-          'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer-arm64.apk',
+          'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer-arm64.apk',
         changelogHighlights: changelog,
         forceUpdate: remoteData?.forceUpdate || false,
         isAutomaticDetection: true,
@@ -103,8 +103,8 @@ export class UpdaterAdapter {
         currentVersion: installedVersion,
         currentVersionCode: installedCode,
         releaseDateFa: '۱۴۰۳/۰۷/۲۳',
-        downloadUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk',
-        arm64DownloadUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer-arm64.apk',
+        downloadUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer.apk',
+        arm64DownloadUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer-arm64.apk',
         changelogHighlights: [
           'سفارش چند مقصده و توقف در مسیر',
           'سفارش زمان‌بندی‌شده و رزرو ساعت اعزام',

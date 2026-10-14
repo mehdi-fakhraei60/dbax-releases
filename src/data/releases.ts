@@ -12,12 +12,14 @@ export interface AppRelease {
   universalApk: {
     fileName: string;
     url: string;
+    directUrl?: string;
     arch: string;
     sizeEst: string;
   };
   arm64Apk: {
     fileName: string;
     url: string;
+    directUrl?: string;
     arch: string;
     sizeEst: string;
   };
@@ -57,15 +59,17 @@ export const APPS: AppRelease[] = [
     taglineEn: 'Map-first on-demand parcel delivery, live tracking & guaranteed shipments',
     universalApk: {
       fileName: 'bax-customer.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer.apk',
+      directUrl: '/downloads/bax-customer.apk',
       arch: 'Universal (همه پردازنده‌ها)',
-      sizeEst: '34.2 MB',
+      sizeEst: '۱۸.۸ مگابایت',
     },
     arm64Apk: {
       fileName: 'bax-customer-arm64.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer-arm64.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer-arm64.apk',
+      directUrl: '/downloads/bax-customer-arm64.apk',
       arch: 'arm64-v8a (بهینه‌شده برای گوشی‌های مدرن)',
-      sizeEst: '26.8 MB',
+      sizeEst: '۷.۸ مگابایت',
     },
     screenRange: 'C01 تا C38 + C07a/b/c',
     highlights: [
@@ -97,15 +101,17 @@ export const APPS: AppRelease[] = [
     taglineEn: 'Exclusive captain app with 0% commission and 8-hour fixed block earnings',
     universalApk: {
       fileName: 'bax-driver.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-driver.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-driver.apk',
+      directUrl: '/downloads/bax-driver.apk',
       arch: 'Universal (همه پردازنده‌ها)',
-      sizeEst: '32.6 MB',
+      sizeEst: '۱۸.۸ مگابایت',
     },
     arm64Apk: {
       fileName: 'bax-driver-arm64.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-driver-arm64.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-driver-arm64.apk',
+      directUrl: '/downloads/bax-driver-arm64.apk',
       arch: 'arm64-v8a (بهینه‌شده برای گوشی‌های مدرن)',
-      sizeEst: '25.1 MB',
+      sizeEst: '۷.۸ مگابایت',
     },
     screenRange: 'D00 تا D38',
     highlights: [
