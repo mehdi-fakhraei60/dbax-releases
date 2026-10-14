@@ -21,8 +21,8 @@ type UpdateListener = (result: UpdateCheckResult) => void;
 export class UpdaterAdapter {
   private static listeners: Set<UpdateListener> = new Set();
   private static cachedResult: UpdateCheckResult | null = null;
-  private static defaultCurrentVersion = '1.0.0-preview5';
-  private static defaultCurrentCode = 5;
+  private static defaultCurrentVersion = CURRENT_RELEASE.version;
+  private static defaultCurrentCode = CURRENT_RELEASE.versionCode;
 
   /**
    * Subscribe to automatic update events.
@@ -58,8 +58,8 @@ export class UpdaterAdapter {
         // Fallback if running offline or in restricted environment
       }
 
-      const latestVer = remoteData?.latestVersion || '1.0.0-preview6';
-      const latestCode = remoteData?.versionCode || 6;
+      const latestVer = remoteData?.latestVersion || CURRENT_RELEASE.version;
+      const latestCode = remoteData?.versionCode || CURRENT_RELEASE.versionCode;
       const releaseDateFa = remoteData?.releaseDateShamsi || '۱۴۰۳/۰۷/۲۳';
       const changelog = remoteData?.changelog || [
         'امکان ثبت سفارش چند مقصده با توقف‌های دلخواه (Multi-Stop Delivery)',
@@ -97,9 +97,9 @@ export class UpdaterAdapter {
       return result;
     } catch {
       const fallbackResult: UpdateCheckResult = {
-        hasUpdate: true,
-        latestVersion: '1.0.0-preview6',
-        latestVersionCode: 6,
+        hasUpdate: false,
+        latestVersion: CURRENT_RELEASE.version,
+        latestVersionCode: CURRENT_RELEASE.versionCode,
         currentVersion: installedVersion,
         currentVersionCode: installedCode,
         releaseDateFa: '۱۴۰۳/۰۷/۲۳',

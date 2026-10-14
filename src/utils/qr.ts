@@ -1,9 +1,48 @@
-// Simple, reliable pure SVG QR Code generator for URLs
-// Encodes text into a standard QR code matrix without external native dependencies
+import QRCode from 'qrcode';
 
-export function generateQrSvg(text: string, size = 180): string {
-  // Using a clean high-contrast encoded QR code via reliable high-availability SVG data URL or SVG rendering
-  // We can generate an SVG image referencing standard high-speed Google Charts / QR API with an offline SVG fallback
-  const encodedText = encodeURIComponent(text);
-  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodedText}&bgcolor=ffffff&color=0f172a&margin=2`;
+/**
+ * Generates an offline, high-contrast QR Code data URL (PNG) completely locally
+ * in the client browser without any external network or server calls.
+ */
+export async function generateQrDataUrl(
+  text: string,
+  size: number = 240
+): Promise<string> {
+  const safeText = text || 'https://github.com/mehdi-fakhraei60/dbax-releases';
+  try {
+    return await QRCode.toDataURL(safeText, {
+      width: size,
+      margin: 2,
+      color: {
+        dark: '#0f172a',
+        light: '#ffffff',
+      },
+      errorCorrectionLevel: 'M',
+    });
+  } catch (error) {
+    console.error('Error generating QR Data URL locally:', error);
+    // Return empty string to allow component-level fallback
+    return '';
+  }
+}
+
+/**
+ * Generates an SVG string representation of the QR code locally.
+ */
+export async function generateQrSvgString(text: string): Promise<string> {
+  const safeText = text || 'https://github.com/mehdi-fakhraei60/dbax-releases';
+  try {
+    return await QRCode.toString(safeText, {
+      type: 'svg',
+      margin: 2,
+      color: {
+        dark: '#0f172a',
+        light: '#ffffff',
+      },
+      errorCorrectionLevel: 'M',
+    });
+  } catch (error) {
+    console.error('Error generating QR SVG string locally:', error);
+    return '';
+  }
 }

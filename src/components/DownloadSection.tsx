@@ -33,12 +33,14 @@ export const DownloadSection: React.FC = () => {
     url: string;
     fileName: string;
     arch: string;
+    fileSize: string;
   }>({
     isOpen: false,
     title: '',
     url: '',
     fileName: '',
     arch: '',
+    fileSize: '',
   });
 
   const handleCopy = (text: string, id: string) => {
@@ -55,6 +57,7 @@ export const DownloadSection: React.FC = () => {
       url: file.url,
       fileName: file.fileName,
       arch: file.arch,
+      fileSize: file.sizeEst,
     });
   };
 
@@ -299,6 +302,7 @@ export const DownloadSection: React.FC = () => {
         url={modalState.url}
         fileName={modalState.fileName}
         arch={modalState.arch}
+        fileSize={modalState.fileSize}
       />
     </div>
   );

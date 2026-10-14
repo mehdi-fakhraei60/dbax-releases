@@ -322,31 +322,31 @@ export const CustomerAppSimulator: React.FC = () => {
   const [signatureSigned, setSignatureSigned] = useState(true);
 
   // In-App Auto-Updater state (C38 via moduals2 UpdaterAdapter)
-  // Current official release version running on user's device is v1.0.0-preview6 (versionCode 6)
-  const [installedVersion, setInstalledVersion] = useState('1.0.0-preview6');
+  // Aligned with official GitHub release track v1.0.0-preview20 (versionCode 20)
+  const [installedVersion, setInstalledVersion] = useState(CURRENT_RELEASE.version);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult>({
     hasUpdate: false,
-    latestVersion: '1.0.0-preview6',
-    latestVersionCode: 6,
-    currentVersion: '1.0.0-preview6',
-    currentVersionCode: 6,
+    latestVersion: CURRENT_RELEASE.version,
+    latestVersionCode: CURRENT_RELEASE.versionCode,
+    currentVersion: CURRENT_RELEASE.version,
+    currentVersionCode: CURRENT_RELEASE.versionCode,
     releaseDateFa: '۱۴۰۳/۰۷/۲۴',
     downloadUrl:
       'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk',
     arm64DownloadUrl:
       'https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer-arm64.apk',
     changelogHighlights: [
+      'اولویت نخست انتخاب روی نقشه نشان با ژئوکدینگ معکوس نام معابر',
       'امکان ثبت سفارش چند مقصده با توقف‌های دلخواه (Multi-Stop Delivery)',
       'سفارش زمان‌بندی‌شده و رزرو قطعی ساعت مراجعه کاپتان (Scheduled Delivery)',
-      'اضافه شدن ناوگان بارهای سنگین، نیسان، خاور و کارگر باربری (Freight & Porter)',
+      'اتصال کاپتان آزمایشی ۰۹۳۹۹۸۸۷۷۸۲ به سامانه رادار دیسپچ',
       'سامانه امانت‌داری و تسویه آنی بهای کالا در محل تحویل (Goods COD Escrow)',
       'پنل سازمانی اختصاصی B2B با قابلیت ایمپورت فایل اکسل/CSV سفارشات گروهی',
       'لینک ردیابی زنده تحت وب بدون نیاز به نصب اپ برای گیرندگان مرسوله',
-      'صدور صورتحساب رسمی مالیاتی مودیان با ۱۰٪ مالیات بر ارزش افزوده',
     ],
     forceUpdate: false,
     isAutomaticDetection: true,
-    detectedAt: 'نسخه رسمی نصب‌شده: v1.0.0-preview6 (بروز)',
+    detectedAt: `نسخه رسمی نصب‌شده: v${CURRENT_RELEASE.version} (بروز)`,
   });
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateProgress, setUpdateProgress] = useState(0);
@@ -922,8 +922,8 @@ export const CustomerAppSimulator: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <a
-                href={selectedArch === 'arm64' ? customerApp.arm64Apk.downloadUrl : customerApp.universalApk.downloadUrl}
-                download
+                href={selectedArch === 'arm64' ? customerApp.arm64Apk.url : customerApp.universalApk.url}
+                download={selectedArch === 'arm64' ? customerApp.arm64Apk.fileName : customerApp.universalApk.fileName}
                 className="flex-1 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-600/30"
               >
                 <Download className="w-4 h-4" />
@@ -3678,21 +3678,26 @@ export const CustomerAppSimulator: React.FC = () => {
       <QrModal
         isOpen={qrOpen}
         onClose={() => setQrOpen(false)}
-        title={`دانلود اپ مشتری باکس (${selectedArch === 'arm64' ? 'نسخه ۶۴ بیتی' : 'نسخه همگانی'})`}
+        title={`دانلود اپلیکیشن باکس (${selectedArch === 'arm64' ? 'نسخه ۶۴ بیتی arm64' : 'نسخه همگانی Universal'})`}
         url={
           selectedArch === 'arm64'
-            ? customerApp.arm64Apk.downloadUrl
-            : customerApp.universalApk.downloadUrl
+            ? customerApp.arm64Apk.url
+            : customerApp.universalApk.url
         }
         fileName={
           selectedArch === 'arm64'
             ? customerApp.arm64Apk.fileName
             : customerApp.universalApk.fileName
         }
+        arch={
+          selectedArch === 'arm64'
+            ? customerApp.arm64Apk.arch
+            : customerApp.universalApk.arch
+        }
         fileSize={
           selectedArch === 'arm64'
-            ? customerApp.arm64Apk.fileSize
-            : customerApp.universalApk.fileSize
+            ? customerApp.arm64Apk.sizeEst
+            : customerApp.universalApk.sizeEst
         }
       />
     </div>

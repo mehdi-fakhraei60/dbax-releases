@@ -543,6 +543,7 @@ export const CustomerMasterView: React.FC = () => {
         url={activeFile.url}
         fileName={activeFile.fileName}
         arch={activeFile.arch}
+        fileSize={activeFile.sizeEst}
       />
     </div>
   );
