@@ -1,0 +1,6 @@
+{
+  "name": "Bax Releases & Downloads",
+  "description": "پرتال رسمی و شبیه‌سازهای دوطرفه اپلیکیشن‌های اندروید باکس مسافر و باکس کاپتان (Bax Captain • ۰۹۳۹۹۸۸۷۷۸۲)",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

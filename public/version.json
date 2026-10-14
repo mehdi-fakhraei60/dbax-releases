@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "appId": "ir.dbax.app",
+  "appName": "Bax",
+  "latestVersion": "1.0.0-preview6",
+  "versionCode": 6,
+  "minSupportedVersionCode": 1,
+  "forceUpdate": false,
+  "releaseDate": "2024-10-14",
+  "releaseDateShamsi": "۱۴۰۳/۰۷/۲۳",
+  "repo": "https://github.com/mehdi-fakhraei60/dbax-releases",
+  "artifacts": {
+    "customer": {
+      "packageName": "ir.dbax.app",
+      "universal": {
+        "fileName": "bax-customer.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk",
+        "arch": "universal",
+        "sizeEst": "35.8 MB"
+      },
+      "arm64": {
+        "fileName": "bax-customer-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer-arm64.apk",
+        "arch": "arm64-v8a",
+        "sizeEst": "28.1 MB"
+      }
+    },
+    "driver": {
+      "packageName": "ir.dbax.app.driver",
+      "universal": {
+        "fileName": "bax-driver.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-driver.apk",
+        "arch": "universal",
+        "sizeEst": "33.9 MB"
+      },
+      "arm64": {
+        "fileName": "bax-driver-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-driver-arm64.apk",
+        "arch": "arm64-v8a",
+        "sizeEst": "26.3 MB"
+      }
+    }
+  },
+  "changelog": [
+    "اولویت نخست انتخاب مستقیم مبدا و مقصد روی نقشه تعاملی نشان (Map-First) با ژئوکدینگ معکوس خودکار",
+    "امکان استفاده اختیاری از آدرس‌های ذخیره‌شده و شعب به درخواست کاربر (نه اجباری)",
+    "اصلاح فرآیند مالی: درخواست پیک بدون پرداخت اولیه، پرداخت پس از رویت بسته و تحویل به کاپتان",
+    "تغییر عنوان رسمی از سفیر به کاپتان و فعال‌سازی شماره تست ۰۹۳۹۹۸۸۷۷۸۲ (کد CAP-9882)",
+    "اتصال رادار اعزام هوشمند بین اپ مشتری و اپ کاپتان به صورت دیسپچ لحظه‌ای",
+    "ارتقای ساختار وب‌اپ و PWA اندروید به Network-First جهت ابطال فوری کش نسخه‌های قبلی"
+  ]
+}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Bax Customer (ir.dbax.app) - Official AndroidManifest.xml Specification
+  Target SDK: 35 | Min SDK: 26 | Framework: Jetpack Compose + Kotlin
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ir.dbax.app">
+
+    <!-- 1. Connectivity & API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 2. Neshan Live Vector Map & Location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- 3. Camera AR Measurement Suite (C07a/b/c) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <!-- 4. Masked Proxy Telephone Call (C19) -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <!-- 5. Real-Time Push Notifications (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- 6. In-App Auto Updater from dbax-releases (C38) -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+
+    <application
+        android:name=".BaxCustomerApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Bax">
+
+        <!-- MainActivity with Deep Link for Tracking & Schemes -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bax.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep Link for Web Receiver Live Tracking (C21) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="dbax.ir" android:pathPrefix="/track" />
+            </intent-filter>
+        </activity>
+
+        <!-- FileProvider for APK In-App Updater Installation -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Neshan Maps SDK Meta Key -->
+        <meta-data
+            android:name="neshan.maps.API_KEY"
+            android:value="${NESHAN_MAP_KEY}" />
+
+    </application>
+</manifest>
