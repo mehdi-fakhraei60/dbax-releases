@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "appId": "ir.dbax.app",
   "appName": "Bax",
-  "latestVersion": "1.0.0-preview41",
-  "versionCode": 41,
+  "latestVersion": "1.0.0-preview43",
+  "versionCode": 43,
   "minSupportedVersionCode": 1,
   "forceUpdate": false,
-  "releaseDate": "2024-10-17",
-  "releaseDateShamsi": "۱۴۰۳/۰۷/۲۶",
+  "releaseDate": "2026-10-17",
+  "releaseDateShamsi": "۱۴۰۵/۰۷/۲۵",
   "repo": "https://github.com/mehdi-fakhraei60/dbax-releases",
   "artifacts": {
     "customer": {
       "packageName": "ir.dbax.app",
       "universal": {
         "fileName": "bax-customer.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-customer.apk",
         "arch": "universal",
         "sizeEst": "18.1 MB"
       },
       "arm64": {
         "fileName": "bax-customer-arm64.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-customer-arm64.apk",
         "arch": "arm64-v8a",
         "sizeEst": "7.6 MB"
       }
@@ -29,24 +29,22 @@
       "packageName": "ir.dbax.app.driver",
       "universal": {
         "fileName": "bax-driver.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-driver.apk",
         "arch": "universal",
         "sizeEst": "18.1 MB"
       },
       "arm64": {
         "fileName": "bax-driver-arm64.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-driver-arm64.apk",
         "arch": "arm64-v8a",
         "sizeEst": "7.6 MB"
       }
     }
   },
   "changelog": [
-    "تسهیل و تسریع حداکثری فلوهای سفارش کاربر و کاپتان بدون هیچ‌گونه تغییر در تم یا ساختار بصری",
-    "افزودن دکمه تک‌لمسی جابجایی مبدا و مقصد روی نقشه تعاملی نشان (Swap ⇄)",
-    "چیپ‌های دسترسی سریع به مقاصد پرتردد (بازار بزرگ، ولیعصر، مهرآباد، سعادت‌آباد)",
-    "دکمه کپی فوری کد امنیتی تحویل ۴ رقمی و اشتراک پیامکی مستقیم به گیرنده مرسوله",
-    "افزودن کلیدهای ناوبری زنده مستقیم کاپتان به نشان، ویز و مپ به همراه تایید آنی کد تحویل",
-    "به‌روزرسانی کش شبکه Network-First سرویس‌ورکر PWA به نسخه bax-cache-v4-preview21"
+    "رفع تحویل OTP پیامکی: قالب پیش‌فرض bax-otp-verify و شماره ارسال 20006601 برای دریافت مطمئن کد ورود",
+    "افزودن فیلدهای عیب‌یابی عمیق برای رهگیری سریع مشکلات ارسال پیامک",
+    "ساخت و امضای کاملاً خودکار APKها در گیت‌هاب اکشن (zipalign + امضای v2/v3 با کلید رسمی DBax) روی هر push و تگ",
+    "نسخه ۴۳: نصب مستقیم به‌عنوان به‌روزرسانی روی همه نسخه‌های قبلی بدون حذف اپ"
   ]
 }
