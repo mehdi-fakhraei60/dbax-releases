@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "appId": "ir.dbax.app",
   "appName": "Bax",
-  "latestVersion": "1.0.0-preview43",
-  "versionCode": 43,
+  "latestVersion": "1.0.0-preview44",
+  "versionCode": 44,
   "minSupportedVersionCode": 1,
   "forceUpdate": false,
   "releaseDate": "2026-10-17",
@@ -14,13 +14,13 @@
       "packageName": "ir.dbax.app",
       "universal": {
         "fileName": "bax-customer.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-customer.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview44/bax-customer.apk",
         "arch": "universal",
         "sizeEst": "18.1 MB"
       },
       "arm64": {
         "fileName": "bax-customer-arm64.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-customer-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview44/bax-customer-arm64.apk",
         "arch": "arm64-v8a",
         "sizeEst": "7.6 MB"
       }
@@ -29,22 +29,24 @@
       "packageName": "ir.dbax.app.driver",
       "universal": {
         "fileName": "bax-driver.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-driver.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview44/bax-driver.apk",
         "arch": "universal",
         "sizeEst": "18.1 MB"
       },
       "arm64": {
         "fileName": "bax-driver-arm64.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview43/bax-driver-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview44/bax-driver-arm64.apk",
         "arch": "arm64-v8a",
         "sizeEst": "7.6 MB"
       }
     }
   },
   "changelog": [
-    "رفع تحویل OTP پیامکی: قالب پیش‌فرض bax-otp-verify و شماره ارسال 20006601 برای دریافت مطمئن کد ورود",
-    "افزودن فیلدهای عیب‌یابی عمیق برای رهگیری سریع مشکلات ارسال پیامک",
-    "ساخت و امضای کاملاً خودکار APKها در گیت‌هاب اکشن (zipalign + امضای v2/v3 با کلید رسمی DBax) روی هر push و تگ",
-    "نسخه ۴۳: نصب مستقیم به‌عنوان به‌روزرسانی روی همه نسخه‌های قبلی بدون حذف اپ"
+    "نقشه نشان فعال شد: نمایش نقشه، موقعیت کنونی شما و مسیریابی روی نقشه",
+    "انتخاب مبدأ و مقصد با ضربه روی نقشه — سوزن همان‌جا ثابت می‌شود و نشانی معکوس گرفته می‌شود",
+    "بعد از انتخاب مبدأ: فرم اطلاعات فرستنده فوراً باز می‌شود (ورود جدید، تأیید ذخیره‌شده یا «خودم»)",
+    "بعد از تأیید فرستنده: سوزن خودکار روی نقشه می‌رود تا مقصد را انتخاب کنید",
+    "بعد از انتخاب مقصد: فرم اطلاعات گیرنده باز می‌شود (جدید، تأیید ذخیره‌شده یا «خودم») و بعد از تأیید، مراحل بعدی ادامه پیدا می‌کند",
+    "انتخاب از آدرس‌های ذخیره‌شده مستقیم از داخل نقشه + جستجوی آدرس نشان"
   ]
 }
