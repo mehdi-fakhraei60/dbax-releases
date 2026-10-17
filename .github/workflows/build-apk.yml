@@ -1,0 +1,45 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Android APKs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant Execute Permission to Gradlew
+        run: |
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+          fi
+
+      - name: Build APKs
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleRelease || ./gradlew assembleDebug
+          else
+            echo "Gradle wrapper not found in root. If Android project is in a subfolder, configure working-directory."
+          fi
+
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bax-apks
+          path: |
+            **/build/outputs/apk/**/*.apk

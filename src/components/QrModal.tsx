@@ -23,8 +23,8 @@ export const QrModal: React.FC<QrModalProps> = ({
   arch = 'Universal (همه پردازنده‌ها)',
   fileSize = '۱۸.۸ مگابایت',
 }) => {
-  // Source toggle: 'local' (internal web server - no 403 / no proxy needed) or 'github' (official releases)
-  const [downloadSource, setDownloadSource] = useState<'local' | 'github'>('local');
+  // Source toggle: 'github' (official releases - direct) or 'local'
+  const [downloadSource, setDownloadSource] = useState<'local' | 'github'>('github');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
@@ -34,15 +34,15 @@ export const QrModal: React.FC<QrModalProps> = ({
   const githubUrl =
     url && url.trim().length > 0
       ? url
-      : `https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/${fileName}`;
+      : `https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/${fileName}`;
 
-  const localRelativeUrl = directUrl || `/downloads/${fileName}`;
+  const localRelativeUrl = directUrl || githubUrl;
   const localFullUrl =
     typeof window !== 'undefined'
       ? `${window.location.origin}${localRelativeUrl}`
       : localRelativeUrl;
 
-  const activeUrl = downloadSource === 'local' ? localFullUrl : githubUrl;
+  const activeUrl = downloadSource === 'local' && directUrl ? localFullUrl : githubUrl;
 
   useEffect(() => {
     if (!isOpen) {
@@ -189,14 +189,10 @@ export const QrModal: React.FC<QrModalProps> = ({
               <span>دوربین گوشی را روی بارکد بگیرید</span>
             </p>
             <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-              {downloadSource === 'local' ? (
-                <span className="text-emerald-300 font-medium flex items-center justify-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>دانلود مستقیم و با نهایت سرعت از سرور وب با حجم {fileSize}</span>
-                </span>
-              ) : (
-                <span>لینک رسمی از مخزن گیت‌هاب (v1.0.0-preview20) با حجم {fileSize}</span>
-              )}
+              <span className="text-emerald-300 font-medium flex items-center justify-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>لینک دانلود مستقیم از سرورهای رسمی GitHub Releases ({fileSize})</span>
+              </span>
             </p>
           </div>
 
@@ -224,26 +220,28 @@ export const QrModal: React.FC<QrModalProps> = ({
         <div className="flex flex-col gap-2 pt-3 border-t border-slate-800">
           <div className="flex items-center gap-2">
             <a
-              href={downloadSource === 'local' ? localRelativeUrl : githubUrl}
+              href={activeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               download={fileName}
               className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors shadow-lg shadow-indigo-600/30"
             >
               <Download className="w-4 h-4" />
-              <span>دانلود فایل {fileName}</span>
+              <span>دانلود مستقیم فایل {fileName}</span>
             </a>
             <a
-              href={downloadSource === 'local' ? localRelativeUrl : githubUrl}
+              href={activeUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-              title="باز کردن لینک مستقیم در تب جدید"
+              title="باز کردن لینک دانلود در تب جدید"
             >
               <ExternalLink className="w-4 h-4" />
             </a>
           </div>
 
           <div className="flex items-center justify-between text-xs text-slate-400 px-1 pt-1">
-            <span className="text-[11px]">نسخه پایدار v1.0.0-preview20</span>
+            <span className="text-[11px]">نسخه رسمی و پایدار v1.0.0-preview41</span>
             <button
               onClick={onClose}
               className="py-1 px-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-medium transition-colors"

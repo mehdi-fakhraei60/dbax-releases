@@ -96,4 +96,53 @@ export class SoundEffects {
       // AudioContext policy handled gracefully
     }
   }
+
+  static playBeep() {
+    if (!this.soundEnabled) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1200, ctx.currentTime);
+
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+    } catch {
+      // AudioContext policy handled gracefully
+    }
+  }
+
+  static playAlert() {
+    if (!this.soundEnabled) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(250, ctx.currentTime);
+      osc.frequency.setValueAtTime(200, ctx.currentTime + 0.15);
+
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch {
+      // AudioContext policy handled gracefully
+    }
+  }
 }

@@ -12,9 +12,13 @@ import {
   ArrowDownToLine, 
   Layers, 
   Info,
-  RefreshCw
+  RefreshCw,
+  ExternalLink,
+  Tag,
+  Calendar,
+  FileDown
 } from 'lucide-react';
-import { APPS, AppRelease, CURRENT_RELEASE } from '../data/releases';
+import { APPS, AppRelease, CURRENT_RELEASE, GITHUB_RELEASES_ARCHIVE, GitHubReleaseItem } from '../data/releases';
 import { QrModal } from './QrModal';
 
 export const DownloadSection: React.FC = () => {
@@ -227,7 +231,9 @@ export const DownloadSection: React.FC = () => {
               {/* Card Actions */}
               <div className="space-y-2.5 pt-4 border-t border-slate-800/70">
                 <a
-                  href={currentFile.directUrl || currentFile.url}
+                  href={currentFile.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   download={currentFile.fileName}
                   className={`w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-lg ${
                     isCustomer
@@ -236,7 +242,7 @@ export const DownloadSection: React.FC = () => {
                   }`}
                 >
                   <ArrowDownToLine className="w-4 h-4" />
-                  <span>دانلود فایل نصب ({currentFile.fileName})</span>
+                  <span>دانلود فایل نصب ({currentFile.fileName}) از گیت‌هاب</span>
                 </a>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -294,6 +300,155 @@ export const DownloadSection: React.FC = () => {
               </span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* GitHub Releases Direct Download Archive */}
+      <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-6 sm:p-7 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">
+                مخزن رسمی گیت‌هاب
+              </span>
+              <span className="text-xs text-slate-400 font-mono">
+                github.com/mehdi-fakhraei60/dbax-releases
+              </span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+              <Tag className="w-5 h-5 text-indigo-400" />
+              <span>آرشیو نسخه‌های منتشرشده در گیت‌هاب (GitHub Releases Archive)</span>
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1">
+              تمامی فایل‌های باینری APK مستقیماً از مخزن رسمی گیت‌هاب و با نهایت سرعت قابل دانلود هستند.
+            </p>
+          </div>
+
+          <a
+            href={CURRENT_RELEASE.repoUrl + '/releases'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition-colors border border-slate-700 shadow-sm shrink-0"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-indigo-400" />
+            <span>مشاهده همه در گیت‌هاب</span>
+          </a>
+        </div>
+
+        {/* Releases List */}
+        <div className="space-y-4">
+          {GITHUB_RELEASES_ARCHIVE.map((rel) => (
+            <div
+              key={rel.tag}
+              className={`rounded-2xl p-4 sm:p-5 border transition-all ${
+                rel.isLatest
+                  ? 'bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-950 border-indigo-500/50 shadow-lg shadow-indigo-950/20'
+                  : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700'
+              }`}
+            >
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-3.5">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs ${
+                      rel.isLatest
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'bg-slate-800 text-slate-300'
+                    }`}
+                  >
+                    <FileDown className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-black text-white text-sm sm:text-base">{rel.name}</span>
+                      {rel.isLatest && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                          آخرین نسخه رسمی (Latest)
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                      <span className="font-mono text-slate-300">{rel.tag}</span>
+                      <span>•</span>
+                      <span>تاریخ انتشار: {rel.dateShamsi} ({rel.date})</span>
+                    </div>
+                  </div>
+                </div>
+
+                <a
+                  href={rel.htmlUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium transition-colors self-start lg:self-auto"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>صفحه انتشار در گیت‌هاب</span>
+                </a>
+              </div>
+
+              {/* Download Buttons Grid (4 APKs) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-2 border-t border-slate-800/80">
+                {/* Customer Universal */}
+                <a
+                  href={rel.customerUniversalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`bax-customer-${rel.tag}.apk`}
+                  className="p-2.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 text-xs font-bold flex items-center justify-between transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <ArrowDownToLine className="w-3.5 h-3.5" />
+                    <span>مشتری Universal</span>
+                  </div>
+                  <span className="text-[10px] opacity-80">{rel.customerUniversalSize}</span>
+                </a>
+
+                {/* Customer ARM64 */}
+                <a
+                  href={rel.customerArm64Url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`bax-customer-arm64-${rel.tag}.apk`}
+                  className="p-2.5 rounded-xl bg-indigo-950/50 hover:bg-indigo-900 text-indigo-200 hover:text-white border border-indigo-500/20 text-xs font-bold flex items-center justify-between transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <Cpu className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>مشتری ARM64</span>
+                  </div>
+                  <span className="text-[10px] opacity-80">{rel.customerArm64Size}</span>
+                </a>
+
+                {/* Driver Universal */}
+                <a
+                  href={rel.driverUniversalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`bax-driver-${rel.tag}.apk`}
+                  className="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-xs font-bold flex items-center justify-between transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <ArrowDownToLine className="w-3.5 h-3.5" />
+                    <span>کاپتان Universal</span>
+                  </div>
+                  <span className="text-[10px] opacity-80">{rel.driverUniversalSize}</span>
+                </a>
+
+                {/* Driver ARM64 */}
+                <a
+                  href={rel.driverArm64Url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`bax-driver-arm64-${rel.tag}.apk`}
+                  className="p-2.5 rounded-xl bg-emerald-950/50 hover:bg-emerald-900 text-emerald-200 hover:text-white border border-emerald-500/20 text-xs font-bold flex items-center justify-between transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <Cpu className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>کاپتان ARM64</span>
+                  </div>
+                  <span className="text-[10px] opacity-80">{rel.driverArm64Size}</span>
+                </a>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

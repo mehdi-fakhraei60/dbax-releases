@@ -73,7 +73,7 @@ export const ReleaseNotesSection: React.FC = () => {
               <span className="text-xs px-2.5 py-1 rounded-md bg-indigo-500/20 text-indigo-300 font-mono font-bold border border-indigo-500/30">
                 RELEASE NOTES
               </span>
-              <span className="text-xs text-slate-400">فایل مرجع: notes/v1.0.0-preview5.md</span>
+              <span className="text-xs text-slate-400">فایل مرجع: notes/v1.0.0-preview41.md</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white">{CURRENT_RELEASE.name}</h2>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 font-mono">
@@ -152,7 +152,7 @@ export const ReleaseNotesSection: React.FC = () => {
         ) : (
           <div className="pt-6">
             <div className="flex items-center justify-between pb-2 text-xs text-slate-400">
-              <span>محتوای مستقیم فایل notes/v1.0.0-preview5.md</span>
+              <span>محتوای مستقیم فایل notes/v1.0.0-preview41.md</span>
               <button
                 onClick={handleCopyRaw}
                 className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-mono transition-colors"

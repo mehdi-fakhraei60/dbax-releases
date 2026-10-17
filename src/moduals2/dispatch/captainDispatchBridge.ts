@@ -45,6 +45,17 @@ export interface ActiveTrip {
   pickedUpAt?: number;
   paidAt?: number;
   deliveredAt?: number;
+  voiceNoteUrl?: string;
+  voiceNoteDurationSec?: number;
+  pickupPhotoUrl?: string;
+  deliveryPhotoUrl?: string;
+  chainedNextTrip?: {
+    id: string;
+    pickupDistanceMeters: number;
+    pickupAddress: string;
+    destAddress: string;
+    fareToman: number;
+  };
 }
 
 // Pre-approved Test Captain registered as per user request (09399887782)
@@ -213,6 +224,33 @@ class CaptainDispatchBridgeService {
       isFarePaid: true,
       paidAt: Date.now(),
       status: 'in_transit',
+      chainedNextTrip: {
+        id: `BX-NEXT-${Math.floor(1000 + Math.random() * 9000)}`,
+        pickupDistanceMeters: 380,
+        pickupAddress: 'تهران، تقاطع ملاصدرا و کردستان، جنب برج فناوری، پلاک ۶۴',
+        destAddress: 'تهران، خیابان شریعتی، بالاتر از میرداماد، کوچه فلسفی، پلاک ۹',
+        fareToman: 68000,
+      },
+    };
+    this.saveToStorage();
+    return true;
+  }
+
+  public setPickupConditionPhoto(tripId: string, photoUrl: string): boolean {
+    if (!this.currentTrip || this.currentTrip.id !== tripId) return false;
+    this.currentTrip = {
+      ...this.currentTrip,
+      pickupPhotoUrl: photoUrl,
+    };
+    this.saveToStorage();
+    return true;
+  }
+
+  public setDeliveryConditionPhoto(tripId: string, photoUrl: string): boolean {
+    if (!this.currentTrip || this.currentTrip.id !== tripId) return false;
+    this.currentTrip = {
+      ...this.currentTrip,
+      deliveryPhotoUrl: photoUrl,
     };
     this.saveToStorage();
     return true;

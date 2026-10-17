@@ -57,13 +57,22 @@ import {
   Building2,
   Receipt,
   FileSpreadsheet,
+  Star,
+  Mic,
+  MicOff,
+  Repeat,
+  Copy,
+  Cpu,
+  ArrowDownToLine,
+  ExternalLink,
 } from 'lucide-react';
-import { APPS, CURRENT_RELEASE } from '../data/releases';
+import { APPS, CURRENT_RELEASE, GITHUB_RELEASES_ARCHIVE } from '../data/releases';
 import { QrModal } from './QrModal';
 import {
   KavenegarAdapter,
   NeshanAdapter,
   NeshanLocation,
+  RouteResult,
   MapHubQuickSelect,
   PaymentGatewayAdapter,
   PaymentMethod,
@@ -199,6 +208,8 @@ export const CustomerAppSimulator: React.FC = () => {
     title: 'میدان انقلاب',
     address: 'تهران، میدان انقلاب اسلامی، ابتدای کارگر شمالی، پلاک ۱۲',
   });
+  const [senderName, setSenderName] = useState('مهدی فخرایی');
+  const [senderPhone, setSenderPhone] = useState('09121112233');
   const [pickupUnit, setPickupUnit] = useState('واحد ۴، طبقه ۲');
 
   // Multi-Drop Destinations state (C06 / DispatchScheduler)
@@ -322,7 +333,7 @@ export const CustomerAppSimulator: React.FC = () => {
   const [signatureSigned, setSignatureSigned] = useState(true);
 
   // In-App Auto-Updater state (C38 via moduals2 UpdaterAdapter)
-  // Aligned with official GitHub release track v1.0.0-preview20 (versionCode 20)
+  // Aligned with official GitHub release track v1.0.0-preview21 (versionCode 21)
   const [installedVersion, setInstalledVersion] = useState(CURRENT_RELEASE.version);
   const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult>({
     hasUpdate: false,
@@ -352,6 +363,99 @@ export const CustomerAppSimulator: React.FC = () => {
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateInstalled, setUpdateInstalled] = useState(false);
   const [emailSentNotice, setEmailSentNotice] = useState(false);
+
+  // New Operational Enhancements (v1.0.0-preview21)
+  const FAVORITE_ROUTES = [
+    {
+      id: 'fav-1',
+      title: 'انقلاب ⬅️ بازار بزرگ',
+      tag: 'تجاری پرتردد',
+      pickup: { lat: 35.7005, lng: 51.3912, title: 'میدان انقلاب', address: 'تهران، میدان انقلاب، ابتدای خیابان کارگر شمالی، پلاک ۱۲' },
+      destination: { lat: 35.6748, lng: 51.4215, title: 'بازار بزرگ تهران', address: 'تهران، بازار بزرگ، سرای مشیر خلوت، پلاک ۴۴' },
+      recipientName: 'حاج احمد رضایی',
+      recipientPhone: '09123344556',
+    },
+    {
+      id: 'fav-2',
+      title: 'ونک ⬅️ سعادت‌آباد',
+      tag: 'شمال و غرب',
+      pickup: { lat: 35.7575, lng: 51.4101, title: 'میدان ونک', address: 'تهران، میدان ونک، ابتدای خیابان ملاصدرا، پلاک ۴۴' },
+      destination: { lat: 35.7878, lng: 51.3732, title: 'سعادت‌آباد (مقصد ۱)', address: 'تهران، سعادت‌آباد، بلوار فرهنگ، کوچه باغ بهشت، پلاک ۸' },
+      recipientName: 'سعید رضوانی',
+      recipientPhone: '۰۹۱۲۹۹۸۸۷۷۶',
+    },
+  ];
+
+  const [isRecordingVoice, setIsRecordingVoice] = useState(false);
+  const [recordedVoiceSec, setRecordedVoiceSec] = useState<number | null>(null);
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+  const [packagingPhotoTaken, setPackagingPhotoTaken] = useState(false);
+  const [showShetabQrModal, setShowShetabQrModal] = useState(false);
+
+  const handleSelectFavoriteRoute = (fav: typeof FAVORITE_ROUTES[0]) => {
+    setSelectedPickup(fav.pickup);
+    setDestinations([
+      {
+        id: 'dest-1',
+        location: fav.destination,
+        recipientName: fav.recipientName,
+        recipientPhone: fav.recipientPhone,
+        unitNotes: 'تحویل حضوری',
+        status: 'pending',
+      },
+    ]);
+    setMapPinCoords({ lat: fav.destination.lat, lng: fav.destination.lng });
+    SoundEffects.playSuccess();
+    PushNotificationAdapter.dispatch(
+      'مسیر منتخب فعال شد',
+      `مسیر «${fav.title}» روی نقشه بارگذاری شد. آماده اعزام کاپتان!`,
+      'C05_map'
+    );
+  };
+
+  const handleToggleVoiceRecord = () => {
+    if (isRecordingVoice) {
+      setIsRecordingVoice(false);
+      setRecordedVoiceSec(5);
+      SoundEffects.playSuccess();
+      PushNotificationAdapter.dispatch(
+        'یادداشت صوتی ذخیره شد',
+        'پیام صوتی ۵ ثانیه‌ای راهنمای نشانی جهت پخش برای کاپتان آماده شد.',
+        currentScreen
+      );
+    } else {
+      setIsRecordingVoice(true);
+      SoundEffects.playBeep();
+      setTimeout(() => {
+        setIsRecordingVoice(false);
+        setRecordedVoiceSec(5);
+        SoundEffects.playSuccess();
+      }, 2500);
+    }
+  };
+
+  const handlePlayVoicePreview = () => {
+    setIsPlayingVoice(true);
+    SoundEffects.playPop();
+    setTimeout(() => setIsPlayingVoice(false), 2000);
+  };
+
+  const handleCapturePackagingPhoto = () => {
+    setPackagingPhotoTaken(true);
+    SoundEffects.playChime();
+    const activeTrip = CaptainDispatchBridge.getActiveTrip();
+    if (activeTrip) {
+      CaptainDispatchBridge.setPickupConditionPhoto(
+        activeTrip.id,
+        'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400'
+      );
+    }
+    PushNotificationAdapter.dispatch(
+      'عکس سلامت فیزیکی بسته ثبت شد',
+      'تصویر وضعیت ظاهری بسته با مهر زمانی در پرونده سفر ذخیره گردید.',
+      currentScreen
+    );
+  };
 
   useEffect(() => {
     let active = true;
@@ -481,17 +585,41 @@ export const CustomerAppSimulator: React.FC = () => {
       const firstDest = destinations[0]?.location || { lat: 35.7878, lng: 51.3732 };
       setMapPinCoords({ lat: firstDest.lat, lng: firstDest.lng });
       PushNotificationAdapter.dispatch(
-        'مبدا روی نقشه ثبت شد',
-        `مبدا: ${selectedPickup.title}. اکنون مقصد ۱ را روی نقشه مشخص کنید.`,
+        'مبدأ و فرستنده تایید شد',
+        `فرستنده: ${senderName} (${selectedPickup.title}). اکنون مقصد و مشخصات گیرنده را مشخص کنید.`,
         'C05_map'
       );
     } else {
+      SoundEffects.playSuccess();
       PushNotificationAdapter.dispatch(
-        'مقصد روی نقشه ثبت شد',
-        `مقصد ${activeDestinationIdx + 1} (${destinations[activeDestinationIdx]?.location.title || 'مقصد'}) تایید شد.`,
-        'C05_map'
+        'مبدأ و مقصد با موفقیت تایید شدند',
+        `از ${selectedPickup.title} به ${destinations[0]?.location?.title || 'مقصد'}. اکنون نوع ناوگان را انتخاب کنید.`,
+        'C08_service'
       );
+      setCurrentScreen('C08_service');
     }
+  };
+
+  const handleSwapPickupDestination = () => {
+    SoundEffects.playPop();
+    const currentPickup = { ...selectedPickup };
+    const currentDest = destinations[activeDestinationIdx]?.location;
+    if (!currentDest) return;
+
+    setSelectedPickup(currentDest);
+    setDestinations((prev) =>
+      prev.map((d, i) => (i === activeDestinationIdx ? { ...d, location: currentPickup } : d))
+    );
+    if (mapTargetMode === 'pickup') {
+      setMapPinCoords({ lat: currentDest.lat, lng: currentDest.lng });
+    } else {
+      setMapPinCoords({ lat: currentPickup.lat, lng: currentPickup.lng });
+    }
+    PushNotificationAdapter.dispatch(
+      'مبدا و مقصد جابجا شدند',
+      `مبدا: ${currentDest.title} ⇄ مقصد: ${currentPickup.title}`,
+      'C05_map'
+    );
   };
 
   const handleSimulateGps = async () => {
@@ -698,7 +826,12 @@ export const CustomerAppSimulator: React.FC = () => {
   // Synchronize with Captain App via real-time bridge
   useEffect(() => {
     const unsub = CaptainDispatchBridge.subscribe((trip) => {
-      if (!trip) return;
+      if (!trip) {
+        setCourierAssigned(false);
+        setPackageReceivedByCourier(false);
+        setIsFarePaid(false);
+        return;
+      }
       if (trip.status === 'accepted') {
         setCourierAssigned(true);
         if (currentScreen === 'C15_finding') {
@@ -734,28 +867,30 @@ export const CustomerAppSimulator: React.FC = () => {
     SoundEffects.playPop();
 
     // Broadcast live trip request to Captain App (09399887782)
+    const vehicleTitle =
+      selectedVehicle === 'box_bike'
+        ? 'موتور باکس‌دار عایق'
+        : selectedVehicle === 'regular_bike'
+        ? 'موتور معمولی (سریع)'
+        : 'وانت بار سبک';
+
     CaptainDispatchBridge.createTripRequest({
-      customerName: 'مهدی فخرایی',
-      customerPhone: '09121112233',
+      customerName: senderName || 'مهدی فخرایی',
+      customerPhone: senderPhone || '09121112233',
       pickupTitle: selectedPickup.title,
-      pickupAddress: selectedPickup.address,
+      pickupAddress: `${selectedPickup.address}${pickupUnit ? `، ${pickupUnit}` : ''}`,
       destinations: destinations.map((d) => ({
         id: d.id,
-        title: d.title,
-        address: d.address,
+        title: d.location.title,
+        address: d.location.address,
         recipientName: d.recipientName || 'گیرنده مرسوله',
         recipientPhone: d.recipientPhone || '09350000000',
         status: 'pending',
       })),
-      packageType:
-        selectedPackageCategory === 'box'
-          ? `کارتن ابعاد (${packageDims.lengthCm}×${packageDims.widthCm}×${packageDims.heightCm} سانتی‌متر)`
-          : selectedPackageCategory === 'envelope'
-          ? 'پاکت نامه / مدارک'
-          : 'بسته اختصاصی',
-      packageDims: packageDims,
+      packageType: `${parcelNotes} (${lengthInput}×${widthInput}×${heightInput} سانتی‌متر)`,
+      packageDims: { lengthCm: lengthInput, widthCm: widthInput, heightCm: heightInput, weightKg: 2 },
       vehicleType: selectedVehicle,
-      vehicleTitleFa: currentVehicleObj.title,
+      vehicleTitleFa: vehicleTitle,
       fareAmount: totalPrice,
     });
 
@@ -853,7 +988,7 @@ export const CustomerAppSimulator: React.FC = () => {
                 hasUpdate: false,
                 currentVersion: newVer,
               }
-            : null
+            : prev
         );
         SoundEffects.playSuccess();
         PushNotificationAdapter.dispatch(
@@ -922,12 +1057,14 @@ export const CustomerAppSimulator: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <a
-                href={selectedArch === 'arm64' ? (customerApp.arm64Apk.directUrl || customerApp.arm64Apk.url) : (customerApp.universalApk.directUrl || customerApp.universalApk.url)}
+                href={selectedArch === 'arm64' ? customerApp.arm64Apk.url : customerApp.universalApk.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 download={selectedArch === 'arm64' ? customerApp.arm64Apk.fileName : customerApp.universalApk.fileName}
                 className="flex-1 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-600/30"
               >
                 <Download className="w-4 h-4" />
-                <span>دانلود APK مستقیم</span>
+                <span>دانلود مستقیم از گیت‌هاب</span>
               </a>
               <button
                 onClick={() => setQrOpen(true)}
@@ -1116,6 +1253,96 @@ export const CustomerAppSimulator: React.FC = () => {
             </div>
           </div>
 
+          {/* GitHub Releases Direct Download Card (Left Side Controller) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/40 space-y-3 shadow-lg">
+            <div className="flex items-center justify-between pb-2 border-b border-indigo-500/20">
+              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Download className="w-3.5 h-3.5 text-indigo-400" />
+                <span>دانلود مستقیم از گیت‌هاب (GitHub Releases)</span>
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                {CURRENT_RELEASE.version}
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              اتصال مستقیم به سرورهای GitHub Releases برای دانلود فوری فایل‌های APK بدون نیاز به واسطه:
+            </p>
+
+            <div className="space-y-2">
+              <div>
+                <div className="text-[10px] font-bold text-indigo-300 mb-1 flex items-center justify-between">
+                  <span>دانلود اپلیکیشن مسافر (Bax Customer):</span>
+                  <span className="text-[9px] font-mono text-slate-400">ir.dbax.app</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <a
+                    href={customerApp.universalApk.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={customerApp.universalApk.fileName}
+                    className="py-2 px-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow-md"
+                  >
+                    <ArrowDownToLine className="w-3 h-3" />
+                    <span>Universal (۱۸ MB)</span>
+                  </a>
+                  <a
+                    href={customerApp.arm64Apk.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={customerApp.arm64Apk.fileName}
+                    className="py-2 px-2.5 rounded-xl bg-indigo-950 hover:bg-indigo-900 text-indigo-200 border border-indigo-500/40 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Cpu className="w-3 h-3 text-indigo-400" />
+                    <span>ARM64 (۷.۶ MB)</span>
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <div className="text-[10px] font-bold text-emerald-300 mb-1 flex items-center justify-between">
+                  <span>دانلود اپلیکیشن کاپتان (Bax Captain):</span>
+                  <span className="text-[9px] font-mono text-slate-400">ir.dbax.app.driver</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <a
+                    href="https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver.apk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download="bax-driver.apk"
+                    className="py-2 px-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow-md"
+                  >
+                    <ArrowDownToLine className="w-3 h-3" />
+                    <span>کاپتان Uni (۱۸ MB)</span>
+                  </a>
+                  <a
+                    href="https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver-arm64.apk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download="bax-driver-arm64.apk"
+                    className="py-2 px-2.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 text-emerald-200 border border-emerald-500/40 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Cpu className="w-3 h-3 text-emerald-400" />
+                    <span>کاپتان ARM64</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
+              <a
+                href={CURRENT_RELEASE.repoUrl + '/releases'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors font-medium"
+              >
+                <ExternalLink className="w-3 h-3" />
+                <span>مشاهده آرشیو تمام نسخه‌ها در گیت‌هاب</span>
+              </a>
+              <span className="text-slate-500 font-mono text-[10px]">GitHub Direct</span>
+            </div>
+          </div>
+
           {/* Modals trigger buttons */}
           <div className="space-y-2">
             <div className="grid grid-cols-2 gap-2">
@@ -1295,14 +1522,16 @@ export const CustomerAppSimulator: React.FC = () => {
                         <path d="M 10 10 L 90 90" stroke="#1e293b" strokeWidth="1.5" strokeDasharray="4 2" fill="none" />
                         <path d="M 10 85 L 90 15" stroke="#1e293b" strokeWidth="1.5" strokeDasharray="4 2" fill="none" />
 
-                        {/* Route Polyline connecting Origin to Destination */}
-                        <path
-                          d={`M ${pickupPin.x} ${pickupPin.y} Q ${(pickupPin.x + destPin.x) / 2 + 10} ${(pickupPin.y + destPin.y) / 2 - 10} ${destPin.x} ${destPin.y}`}
-                          stroke="#6366f1"
-                          strokeWidth="3"
-                          strokeDasharray="4 3"
-                          fill="none"
-                        />
+                        {/* Route Polyline connecting Origin to Destination (Only in Destination Mode) */}
+                        {mapTargetMode === 'destination' && (
+                          <path
+                            d={`M ${pickupPin.x} ${pickupPin.y} Q ${(pickupPin.x + destPin.x) / 2 + 10} ${(pickupPin.y + destPin.y) / 2 - 10} ${destPin.x} ${destPin.y}`}
+                            stroke="#6366f1"
+                            strokeWidth="3"
+                            strokeDasharray="4 3"
+                            fill="none"
+                          />
+                        )}
 
                         {/* Live Moving Captains (Motorcycles / Couriers) */}
                         {nearbyCouriers.slice(0, 5).map((c, i) => (
@@ -1427,27 +1656,41 @@ export const CustomerAppSimulator: React.FC = () => {
                           <div>
                             <div className="text-xs font-bold text-white">
                               {mapTargetMode === 'pickup'
-                                ? 'مرحله ۱ از ۲: انتخاب مبدا روی نقشه'
-                                : `مرحله ۲ از ۲: انتخاب مقصد ${activeDestinationIdx + 1} روی نقشه`}
+                                ? 'مرحله ۱ از ۲: تعیین مبدأ و مشخصات فرستنده'
+                                : `مرحله ۲ از ۲: تعیین مقصد و مشخصات گیرنده`}
                             </div>
                             <p className="text-[9px] text-slate-400">
-                              روی هر نقطه از نقشه لمس کنید تا نشانگر جابجا شود
+                              {mapTargetMode === 'pickup'
+                                ? 'پین را روی موقعیت فرستنده تنظیم کنید (گیرنده در مرحله بعد)'
+                                : 'پین را روی آدرس تحویل به گیرنده قرار دهید'}
                             </p>
                           </div>
                         </div>
 
-                        {mapTargetMode === 'destination' && (
-                          <button
-                            onClick={() => {
-                              setMapTargetMode('pickup');
-                              setMapPinCoords({ lat: selectedPickup.lat, lng: selectedPickup.lng });
-                              SoundEffects.playPop();
-                            }}
-                            className="px-2 py-1 rounded-xl bg-slate-950 text-slate-300 hover:text-white border border-slate-800 text-[10px] font-bold"
-                          >
-                            ویرایش مبدا
-                          </button>
-                        )}
+                        <div className="flex items-center gap-1.5">
+                          {mapTargetMode === 'destination' && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setMapTargetMode('pickup');
+                                  setMapPinCoords({ lat: selectedPickup.lat, lng: selectedPickup.lng });
+                                  SoundEffects.playPop();
+                                }}
+                                className="px-2 py-1 rounded-xl bg-slate-950 text-slate-300 hover:text-white border border-slate-800 text-[10px] font-bold"
+                              >
+                                ویرایش مبدا
+                              </button>
+                              <button
+                                onClick={handleSwapPickupDestination}
+                                className="px-2 py-1 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all"
+                                title="جابجایی فوری مبدا و مقصد"
+                              >
+                                <Repeat className="w-3 h-3 text-indigo-400" />
+                                <span>جابجایی ⇄</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
 
                       {/* Search Places Input (Collapsible/Floating) */}
@@ -1497,6 +1740,58 @@ export const CustomerAppSimulator: React.FC = () => {
                     {/* FLOATING BOTTOM DRAWER / ACTION CARD OVER THE MAP */}
                     <div className="relative z-20 p-3 pointer-events-auto">
                       <div className="p-3.5 rounded-3xl bg-slate-900/95 border border-slate-750 backdrop-blur-md shadow-2xl space-y-2.5">
+                        {/* Quick Favorite Routes (One-Tap Speed Preset) */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                          <span className="text-[9px] text-amber-400 font-bold shrink-0 flex items-center gap-0.5">
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            مسیرهای منتخب:
+                          </span>
+                          {FAVORITE_ROUTES.map((fav) => (
+                            <button
+                              key={fav.id}
+                              onClick={() => handleSelectFavoriteRoute(fav)}
+                              className="px-2 py-0.5 rounded-lg bg-slate-950/80 hover:bg-amber-950/50 border border-slate-800 hover:border-amber-500/50 text-[10px] text-slate-300 hover:text-white shrink-0 flex items-center gap-1 transition-all"
+                            >
+                              <span>{fav.title}</span>
+                              <span className="text-[8px] px-1 rounded bg-slate-900 text-amber-300 font-mono">{fav.tag}</span>
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Quick Destination Chips for Fast Selection */}
+                        {mapTargetMode === 'destination' && (
+                          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                            <span className="text-[9px] text-rose-400 font-bold shrink-0 flex items-center gap-0.5">
+                              <MapPin className="w-3 h-3 text-rose-400" />
+                              مقاصد پرتردد:
+                            </span>
+                            {[
+                              { title: 'بازار بزرگ', lat: 35.6762, lng: 51.4244, address: 'تهران، خیابان ۱۵ خرداد، بازار بزرگ تهران' },
+                              { title: 'میدان ولیعصر', lat: 35.7118, lng: 51.4072, address: 'تهران، میدان ولیعصر، تقاطع کریم‌خان' },
+                              { title: 'سعادت‌آباد', lat: 35.7878, lng: 51.3732, address: 'تهران، سعادت‌آباد، میدان کاج' },
+                              { title: 'فرودگاه مهرآباد', lat: 35.6892, lng: 51.3134, address: 'تهران، بزرگراه لشکری، ترمینال ۲ فرودگاه' },
+                            ].map((hub, i) => (
+                              <button
+                                key={i}
+                                onClick={() => {
+                                  SoundEffects.playPop();
+                                  setMapPinCoords({ lat: hub.lat, lng: hub.lng });
+                                  setDestinations((prev) =>
+                                    prev.map((d, idx) =>
+                                      idx === activeDestinationIdx
+                                        ? { ...d, location: { lat: hub.lat, lng: hub.lng, title: hub.title, address: hub.address } }
+                                        : d
+                                    )
+                                  );
+                                }}
+                                className="px-2 py-0.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 text-[10px] text-rose-200 hover:text-white shrink-0 flex items-center gap-1 transition-colors"
+                              >
+                                <span>{hub.title}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
                         {/* Selected Address Display */}
                         <div className="space-y-1">
                           <div className="flex items-center justify-between text-[11px]">
@@ -1529,50 +1824,139 @@ export const CustomerAppSimulator: React.FC = () => {
                           </p>
                         </div>
 
-                        {/* Extra Details Inputs */}
+                        {/* Form Inputs: Stage 1 = Sender Only, Stage 2 = Recipient Only */}
                         {mapTargetMode === 'pickup' ? (
-                          <div className="flex items-center gap-2 pt-0.5">
-                            <span className="text-[10px] text-slate-400 shrink-0">پلاک / واحد مبدا:</span>
-                            <input
-                              type="text"
-                              value={pickupUnit}
-                              onChange={(e) => setPickupUnit(e.target.value)}
-                              placeholder="مثال: واحد ۴، زنگ ۳"
-                              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500"
-                            />
+                          <div className="space-y-1.5 pt-0.5">
+                            <div className="text-[10px] font-bold text-emerald-400 flex items-center justify-between">
+                              <span>مشخصات فرستنده (مبدأ):</span>
+                              <span className="text-[9px] text-slate-400 font-normal">جهت هماهنگی کاپتان در مبدأ</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <input
+                                type="text"
+                                value={senderName}
+                                onChange={(e) => setSenderName(e.target.value)}
+                                placeholder="نام فرستنده"
+                                className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 outline-none"
+                              />
+                              <input
+                                type="text"
+                                value={senderPhone}
+                                onChange={(e) => setSenderPhone(e.target.value)}
+                                placeholder="موبایل فرستنده"
+                                className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 font-mono text-left outline-none"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-slate-400 shrink-0">پلاک / واحد مبدأ:</span>
+                              <input
+                                type="text"
+                                value={pickupUnit}
+                                onChange={(e) => setPickupUnit(e.target.value)}
+                                placeholder="مثال: پلاک ۱۲، واحد ۴، زنگ ۳"
+                                className="flex-1 bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 outline-none"
+                              />
+                            </div>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-2 gap-2 pt-0.5">
-                            <input
-                              type="text"
-                              value={destinations[activeDestinationIdx]?.recipientName || ''}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setDestinations(
-                                  destinations.map((d, i) =>
-                                    i === activeDestinationIdx ? { ...d, recipientName: val } : d
-                                  )
-                                );
-                              }}
-                              placeholder="نام گیرنده"
-                              className="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500"
-                            />
-                            <input
-                              type="text"
-                              value={destinations[activeDestinationIdx]?.recipientPhone || ''}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setDestinations(
-                                  destinations.map((d, i) =>
-                                    i === activeDestinationIdx ? { ...d, recipientPhone: val } : d
-                                  )
-                                );
-                              }}
-                              placeholder="شماره موبایل گیرنده"
-                              className="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 font-mono text-left"
-                            />
+                          <div className="space-y-1.5 pt-0.5">
+                            <div className="text-[10px] font-bold text-rose-400 flex items-center justify-between">
+                              <span>مشخصات گیرنده (مقصد):</span>
+                              <span className="text-[9px] text-slate-400 font-normal">جهت تحویل و ارسال پیامک</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <input
+                                type="text"
+                                value={destinations[activeDestinationIdx]?.recipientName || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setDestinations(
+                                    destinations.map((d, i) =>
+                                      i === activeDestinationIdx ? { ...d, recipientName: val } : d
+                                    )
+                                  );
+                                }}
+                                placeholder="نام گیرنده"
+                                className="bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 outline-none"
+                              />
+                              <input
+                                type="text"
+                                value={destinations[activeDestinationIdx]?.recipientPhone || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setDestinations(
+                                    destinations.map((d, i) =>
+                                      i === activeDestinationIdx ? { ...d, recipientPhone: val } : d
+                                    )
+                                  );
+                                }}
+                                placeholder="موبایل گیرنده"
+                                className="bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 font-mono text-left outline-none"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-slate-400 shrink-0">پلاک / واحد مقصد:</span>
+                              <input
+                                type="text"
+                                value={destinations[activeDestinationIdx]?.unitNotes || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setDestinations(
+                                    destinations.map((d, i) =>
+                                      i === activeDestinationIdx ? { ...d, unitNotes: val } : d
+                                    )
+                                  );
+                                }}
+                                placeholder="مثال: پلاک ۸، زنگ ۲، طبقه همکف"
+                                className="flex-1 bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-2.5 py-1 text-xs text-white placeholder-slate-500 outline-none"
+                              />
+                            </div>
                           </div>
                         )}
+
+                        {/* Voice Note & Condition Photo Bar */}
+                        <div className="flex items-center justify-between gap-1.5 p-1.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-[10px]">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={handleToggleVoiceRecord}
+                              className={`p-1.5 rounded-lg border flex items-center gap-1 transition-all ${
+                                isRecordingVoice
+                                  ? 'bg-rose-600 text-white border-rose-500 animate-pulse'
+                                  : recordedVoiceSec
+                                  ? 'bg-emerald-950 border-emerald-500/50 text-emerald-300'
+                                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:text-white'
+                              }`}
+                              title="ضبط یادداشت صوتی ۵ ثانیه‌ای راهنمای نشانی برای کاپتان"
+                            >
+                              <Mic className="w-3 h-3 text-amber-400" />
+                              <span>
+                                {isRecordingVoice ? 'در حال ضبط...' : recordedVoiceSec ? 'وویس راهنما آماده (۵ث)' : 'وویس نشانی'}
+                              </span>
+                            </button>
+                            {recordedVoiceSec && (
+                              <button
+                                onClick={handlePlayVoicePreview}
+                                className="px-1.5 py-1 rounded bg-slate-900 text-emerald-400 hover:text-white text-[9px] flex items-center gap-1"
+                              >
+                                <Volume2 className="w-3 h-3" />
+                                <span>{isPlayingVoice ? 'پخش...' : 'تست'}</span>
+                              </button>
+                            )}
+                          </div>
+
+                          <button
+                            onClick={handleCapturePackagingPhoto}
+                            className={`px-2 py-1 rounded-lg border flex items-center gap-1 text-[9px] transition-all ${
+                              packagingPhotoTaken
+                                ? 'bg-indigo-950 border-indigo-500/50 text-indigo-300 font-bold'
+                                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                            }`}
+                            title="ثبت عکس تایید سلامت بسته‌بندی در مبدا"
+                          >
+                            <Camera className="w-3 h-3 text-cyan-400" />
+                            <span>{packagingPhotoTaken ? '✓ عکس سلامت ثبت شد' : 'عکس سلامت کارتن'}</span>
+                          </button>
+                        </div>
 
                         {/* PRIMARY ACTION BUTTON (CONFIRM ON MAP) */}
                         <div className="space-y-2 pt-1">
@@ -1582,15 +1966,15 @@ export const CustomerAppSimulator: React.FC = () => {
                               className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transform active:scale-98 transition-all"
                             >
                               <Check className="w-4 h-4" />
-                              <span>تایید مبدا روی نقشه و انتخاب مقصد ⬅️</span>
+                              <span>تایید مبدأ و مشخصات فرستنده ⬅️ مرحله ۲: تعیین مقصد و گیرنده</span>
                             </button>
                           ) : (
                             <button
-                              onClick={() => setCurrentScreen('C08_service')}
+                              onClick={handleConfirmCurrentMapSelection}
                               className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-600 via-indigo-600 to-purple-600 hover:from-rose-500 hover:to-indigo-500 text-white font-black text-xs shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transform active:scale-98 transition-all"
                             >
                               <Check className="w-4 h-4" />
-                              <span>تایید مقصد روی نقشه و انتخاب ناوگان (C08) ⬅️</span>
+                              <span>تایید نهایی مقصد و مشخصات گیرنده ⬅️ انتخاب ناوگان و اعزام (C08)</span>
                             </button>
                           )}
 
@@ -1604,7 +1988,11 @@ export const CustomerAppSimulator: React.FC = () => {
                               className="px-2.5 py-1 rounded-xl bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-300 font-bold flex items-center gap-1.5 transition-colors"
                             >
                               <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                              <span>استفاده از آدرس‌های ذخیره‌شده (اختیاری)</span>
+                              <span>
+                                {mapTargetMode === 'pickup'
+                                  ? 'آدرس‌های ذخیره‌شده فرستنده (اختیاری)'
+                                  : 'آدرس‌های ذخیره‌شده گیرنده (اختیاری)'}
+                              </span>
                             </button>
 
                             {mapTargetMode === 'destination' && destinations.length < 3 && (
@@ -1664,61 +2052,66 @@ export const CustomerAppSimulator: React.FC = () => {
                                 </div>
                                 <p className="text-[10px] text-slate-300 line-clamp-1">{addr.fullAddressFa}</p>
                                 <div className="flex items-center gap-2 pt-1 border-t border-slate-850">
-                                  <button
-                                    onClick={() => {
-                                      setSelectedPickup({
-                                        lat: addr.location.lat,
-                                        lng: addr.location.lng,
-                                        title: addr.titleFa,
-                                        address: addr.fullAddressFa,
-                                      });
-                                      setPickupUnit(addr.unitNotesFa || 'واحد اصلی');
-                                      setMapPinCoords({ lat: addr.location.lat, lng: addr.location.lng });
-                                      setShowSavedAddressesSheet(false);
-                                      SoundEffects.playPop();
-                                      PushNotificationAdapter.dispatch(
-                                        'مبدا از آدرس ذخیره‌شده انتخاب شد',
-                                        addr.titleFa,
-                                        'C05_map'
-                                      );
-                                    }}
-                                    className="flex-1 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-[10px] font-bold text-center transition-all"
-                                  >
-                                    🟢 تنظیم به عنوان مبدا
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setDestinations((prev) =>
-                                        prev.map((d, i) =>
-                                          i === activeDestinationIdx
-                                            ? {
-                                                ...d,
-                                                location: {
-                                                  lat: addr.location.lat,
-                                                  lng: addr.location.lng,
-                                                  title: addr.titleFa,
-                                                  address: addr.fullAddressFa,
-                                                },
-                                                recipientName: addr.contactName,
-                                                recipientPhone: addr.contactPhone,
-                                                unitNotes: addr.unitNotesFa,
-                                              }
-                                            : d
-                                        )
-                                      );
-                                      setMapPinCoords({ lat: addr.location.lat, lng: addr.location.lng });
-                                      setShowSavedAddressesSheet(false);
-                                      SoundEffects.playPop();
-                                      PushNotificationAdapter.dispatch(
-                                        `مقصد ${activeDestinationIdx + 1} از آدرس ذخیره‌شده انتخاب شد`,
-                                        addr.titleFa,
-                                        'C05_map'
-                                      );
-                                    }}
-                                    className="flex-1 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 text-[10px] font-bold text-center transition-all"
-                                  >
-                                    🔴 تنظیم به عنوان مقصد
-                                  </button>
+                                  {mapTargetMode === 'pickup' ? (
+                                    <button
+                                      onClick={() => {
+                                        setSelectedPickup({
+                                          lat: addr.location.lat,
+                                          lng: addr.location.lng,
+                                          title: addr.titleFa,
+                                          address: addr.fullAddressFa,
+                                        });
+                                        setPickupUnit(addr.unitNotesFa || 'واحد اصلی');
+                                        if (addr.contactName) setSenderName(addr.contactName);
+                                        if (addr.contactPhone) setSenderPhone(addr.contactPhone);
+                                        setMapPinCoords({ lat: addr.location.lat, lng: addr.location.lng });
+                                        setShowSavedAddressesSheet(false);
+                                        SoundEffects.playPop();
+                                        PushNotificationAdapter.dispatch(
+                                          'مبدأ از آدرس ذخیره‌شده فرستنده انتخاب شد',
+                                          addr.titleFa,
+                                          'C05_map'
+                                        );
+                                      }}
+                                      className="w-full py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5"
+                                    >
+                                      <span>🟢 انتخاب به عنوان مبدأ (فرستنده)</span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => {
+                                        setDestinations((prev) =>
+                                          prev.map((d, i) =>
+                                            i === activeDestinationIdx
+                                              ? {
+                                                  ...d,
+                                                  location: {
+                                                    lat: addr.location.lat,
+                                                    lng: addr.location.lng,
+                                                    title: addr.titleFa,
+                                                    address: addr.fullAddressFa,
+                                                  },
+                                                  recipientName: addr.contactName || d.recipientName,
+                                                  recipientPhone: addr.contactPhone || d.recipientPhone,
+                                                  unitNotes: addr.unitNotesFa || d.unitNotes,
+                                                }
+                                              : d
+                                          )
+                                        );
+                                        setMapPinCoords({ lat: addr.location.lat, lng: addr.location.lng });
+                                        setShowSavedAddressesSheet(false);
+                                        SoundEffects.playPop();
+                                        PushNotificationAdapter.dispatch(
+                                          `مقصد از آدرس ذخیره‌شده گیرنده انتخاب شد`,
+                                          addr.titleFa,
+                                          'C05_map'
+                                        );
+                                      }}
+                                      className="w-full py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5"
+                                    >
+                                      <span>🔴 انتخاب به عنوان مقصد (گیرنده)</span>
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             ))}
@@ -1954,7 +2347,7 @@ export const CustomerAppSimulator: React.FC = () => {
                           </button>
 
                           <button
-                            onClick={handleSimulateArScan}
+                            onClick={handleScanWithCardReference}
                             disabled={isScanningAr}
                             className="py-1 px-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-bold shadow flex items-center gap-1"
                           >
@@ -2091,6 +2484,36 @@ export const CustomerAppSimulator: React.FC = () => {
                     </button>
                     <span className="text-xs font-bold text-white">صفحه C08/09 • زمان تحویل و ناوگان</span>
                     <span className="w-4" />
+                  </div>
+
+                  {/* Confirmed Handover Route Card */}
+                  <div className="p-3 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-white flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>مسیر و مشخصات تحویل تایید شده</span>
+                      </span>
+                      <button
+                        onClick={() => setCurrentScreen('C05_map')}
+                        className="text-[10px] text-indigo-400 hover:text-white underline font-bold"
+                      >
+                        ویرایش مسیر
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[10px]">
+                      <div className="p-2 rounded-xl bg-slate-950/80 border border-emerald-500/30 space-y-0.5">
+                        <span className="text-emerald-400 font-bold block">مبدأ (فرستنده):</span>
+                        <div className="text-white font-bold truncate">{senderName}</div>
+                        <div className="text-slate-400 truncate">{selectedPickup.title}</div>
+                        <div className="text-slate-500 font-mono">{senderPhone}</div>
+                      </div>
+                      <div className="p-2 rounded-xl bg-slate-950/80 border border-rose-500/30 space-y-0.5">
+                        <span className="text-rose-400 font-bold block">مقصد (گیرنده):</span>
+                        <div className="text-white font-bold truncate">{destinations[0]?.recipientName}</div>
+                        <div className="text-slate-400 truncate">{destinations[0]?.location.title}</div>
+                        <div className="text-slate-500 font-mono">{destinations[0]?.recipientPhone}</div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Scheduled vs Immediate Option (DispatchScheduler) */}
@@ -2280,7 +2703,7 @@ export const CustomerAppSimulator: React.FC = () => {
 
                     {discountAmount > 0 && (
                       <div className="flex justify-between text-[11px] text-emerald-400">
-                        <span>تخفیف کوپن ({appliedPromo?.promoCode}):</span>
+                        <span>تخفیف کوپن ({appliedPromo?.code}):</span>
                         <span className="font-mono">-{new Intl.NumberFormat('fa-IR').format(discountAmount)} ت</span>
                       </div>
                     )}
@@ -2558,7 +2981,7 @@ export const CustomerAppSimulator: React.FC = () => {
                         </div>
                         <div className="text-[10px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-800/60">
                           <span>نحوه تسویه:</span>
-                          <div className="flex gap-2">
+                          <div className="flex gap-1.5 flex-wrap">
                             <button
                               onClick={() => setSelectedPaymentMethod('wallet_credit')}
                               className={`px-2 py-0.5 rounded text-[10px] border transition-all ${
@@ -2577,7 +3000,14 @@ export const CustomerAppSimulator: React.FC = () => {
                                   : 'border-slate-800 text-slate-400'
                               }`}
                             >
-                              کارتخوان کاپتان
+                              کارتخوان
+                            </button>
+                            <button
+                              onClick={() => setShowShetabQrModal(true)}
+                              className="px-2 py-0.5 rounded text-[10px] border border-amber-500/40 bg-amber-950/40 text-amber-300 font-bold hover:bg-amber-900/50 flex items-center gap-1"
+                            >
+                              <QrCode className="w-3 h-3" />
+                              <span>QR شتاب</span>
                             </button>
                           </div>
                         </div>
@@ -2609,6 +3039,20 @@ export const CustomerAppSimulator: React.FC = () => {
                     </div>
                   )}
 
+                  {/* Automated SMS Handshake to Recipient */}
+                  <div className="p-2 rounded-xl bg-indigo-950/40 border border-indigo-500/30 flex items-center justify-between text-[10px]">
+                    <span className="text-indigo-300 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>پیامک لینک رهگیری زنده وب خودکار به گیرنده ({destinations[0]?.recipientPhone || '۰۹۳۵...'}) مخابره شد</span>
+                    </span>
+                    <button
+                      onClick={() => setShowWebTrackingModal(true)}
+                      className="text-indigo-400 hover:text-white font-bold underline shrink-0 mr-1"
+                    >
+                      لینک
+                    </button>
+                  </div>
+
                   {/* Multi-Destination Journey Progress */}
                   <div className="p-3 bg-slate-900/90 rounded-2xl border border-slate-800 space-y-2">
                     <div className="flex items-center justify-between text-[11px]">
@@ -2637,9 +3081,37 @@ export const CustomerAppSimulator: React.FC = () => {
                   </div>
 
                   {/* Delivery Handshake Code Box (C30) */}
-                  <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 text-center space-y-1">
-                    <div className="text-[10px] text-slate-300">کد امنیتی ۴ رقمی تحویل (به گیرنده و کاپتان ارائه دهید):</div>
-                    <div className="text-2xl font-black font-mono tracking-widest text-indigo-400">۴۸۹۲</div>
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-indigo-950/60 via-purple-950/40 to-slate-900 border border-indigo-500/40 flex items-center justify-between">
+                    <div>
+                      <div className="text-[10px] text-slate-300">کد امنیتی ۴ رقمی تحویل:</div>
+                      <div className="text-2xl font-black font-mono tracking-widest text-indigo-300">۴۸۹۲</div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard?.writeText('4892');
+                          SoundEffects.playPop();
+                          PushNotificationAdapter.dispatch(
+                            'کد تحویل کپی شد',
+                            'کد ۴۸۹۲ جهت ارائه به کاپتان کپی شد.',
+                            'C18_tracking'
+                          );
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600 border border-indigo-500/40 text-indigo-200 hover:text-white text-[11px] font-bold flex items-center gap-1 transition-all"
+                        title="کپی کردن کد ۴ رقمی"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>کپی کد</span>
+                      </button>
+                      <a
+                        href={`sms:${destinations[0]?.recipientPhone || '09351234567'}?body=کد تحویل مرسوله باکس شما: 4892`}
+                        className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-all"
+                        title="ارسال پیامک کد به گیرنده"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>پیامک</span>
+                      </a>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -2740,6 +3212,14 @@ export const CustomerAppSimulator: React.FC = () => {
                             status: 'pending',
                           },
                         ]);
+                        setCourierAssigned(false);
+                        setPackageReceivedByCourier(false);
+                        setIsFarePaid(false);
+                        setTrackProgress(0);
+                        CaptainDispatchBridge.resetDemoTrip();
+                        setMapTargetMode('pickup');
+                        setActiveDestinationIdx(0);
+                        setMapPinCoords({ lat: selectedPickup.lat, lng: selectedPickup.lng });
                         setCurrentScreen('C05_map');
                       }}
                       className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs"
@@ -3259,7 +3739,7 @@ export const CustomerAppSimulator: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-slate-400 text-[10px] block">تاریخ و ساعت:</span>
-                  <span className="font-mono text-white">{officialInvoice?.date || '۱۴۰۳/۰۷/۲۲'}</span>
+                  <span className="font-mono text-white">{officialInvoice?.dateShamsi || '۱۴۰۳/۰۷/۲۲'}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 text-[10px] block">مشتری:</span>
@@ -3340,7 +3820,7 @@ export const CustomerAppSimulator: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                <span>{BAX_TERMS_AND_CONDITIONS.titleFa}</span>
+                <span>قوانین و شرایط استفاده از سامانه باکس (Bax)</span>
               </h3>
               <button onClick={() => setShowTermsModal(false)} className="text-slate-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -3348,12 +3828,16 @@ export const CustomerAppSimulator: React.FC = () => {
             </div>
 
             <div className="mt-4 space-y-4 text-xs">
-              {BAX_TERMS_AND_CONDITIONS.articles.map((art) => (
-                <div key={art.articleNumber} className="space-y-1.5 p-3 rounded-xl bg-slate-950 border border-slate-800">
+              {BAX_TERMS_AND_CONDITIONS.map((sec, idx) => (
+                <div key={idx} className="space-y-1.5 p-3 rounded-xl bg-slate-950 border border-slate-800">
                   <h4 className="font-bold text-white text-[11px] text-indigo-300">
-                    ماده {art.articleNumber}: {art.titleFa}
+                    {sec.titleFa}
                   </h4>
-                  <p className="text-slate-300 leading-relaxed text-[10px]">{art.contentFa}</p>
+                  <ul className="space-y-1 list-disc list-inside text-slate-300 leading-relaxed text-[10px]">
+                    {sec.articles.map((art, aIdx) => (
+                      <li key={aIdx}>{art}</li>
+                    ))}
+                  </ul>
                 </div>
               ))}
             </div>
@@ -3386,15 +3870,15 @@ export const CustomerAppSimulator: React.FC = () => {
 
             <div className="mt-4 space-y-3">
               {BAX_SMS_TEMPLATES.map((tmpl) => (
-                <div key={tmpl.templateKey} className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 text-xs">
+                <div key={tmpl.event} className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-white text-[11px]">{tmpl.purposeFa}</span>
+                    <span className="font-bold text-white text-[11px]">{tmpl.eventTitleFa}</span>
                     <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-indigo-300 border border-slate-800">
-                      {tmpl.templateKey}
+                      {tmpl.templateName}
                     </span>
                   </div>
                   <p className="text-[10px] text-slate-300 font-mono leading-relaxed bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
-                    {tmpl.sampleText}
+                    {tmpl.sampleMessageFa}
                   </p>
                 </div>
               ))}
@@ -3670,6 +4154,55 @@ export const CustomerAppSimulator: React.FC = () => {
                 انصراف
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Instant Shetab QR Code Payment */}
+      {showShetabQrModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-slate-900 border border-amber-500/50 rounded-3xl p-6 text-slate-100 text-center space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                <CreditCard className="w-4 h-4 text-amber-400" />
+                <span>بارکد آنی پرداخت شتاب (شاپرک)</span>
+              </span>
+              <button onClick={() => setShowShetabQrModal(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 bg-white rounded-2xl mx-auto w-48 h-48 flex items-center justify-center shadow-lg">
+              <svg className="w-40 h-40" viewBox="0 0 100 100">
+                <rect width="100" height="100" fill="white" />
+                {/* Simulated dynamic QR matrix pattern */}
+                <path d="M10 10 h30 v30 h-30 z M15 15 h20 v20 h-20 z M20 20 h10 v10 h-10 z" fill="#0f172a" />
+                <path d="M60 10 h30 v30 h-30 z M65 15 h20 v20 h-20 z M70 20 h10 v10 h-10 z" fill="#0f172a" />
+                <path d="M10 60 h30 v30 h-30 z M15 65 h20 v20 h-20 z M20 70 h10 v10 h-10 z" fill="#0f172a" />
+                <circle cx="50" cy="50" r="8" fill="#6366f1" />
+                <path d="M45 15 h10 v10 h-10 z M45 35 h10 v10 h-10 z M15 45 h10 v10 h-10 z M35 45 h10 v10 h-10 z M60 45 h10 v10 h-10 z M80 45 h10 v10 h-10 z M50 65 h10 v10 h-10 z M65 65 h10 v10 h-10 z M80 65 h10 v10 h-10 z M45 80 h10 v10 h-10 z M65 80 h10 v10 h-10 z" fill="#0f172a" />
+              </svg>
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-xs font-bold text-white">مبلغ قابل تسویه:</div>
+              <div className="text-lg font-black font-mono text-emerald-400">
+                {new Intl.NumberFormat('fa-IR').format(totalPrice)} تومان
+              </div>
+              <p className="text-[10px] text-slate-300">
+                با دوربین گوشی یا اپلیکیشن‌های بانکی (آپ، همراه کارت، بام، ایوا) اسکن و تسویه فرمایید.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowShetabQrModal(false);
+                handlePayOrder();
+              }}
+              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30"
+            >
+              ✓ اسکن شد و پرداخت انجام گردید
+            </button>
           </div>
         </div>
       )}

@@ -218,12 +218,14 @@ export const CustomerMasterView: React.FC = () => {
             <span className="hidden md:inline">اسکن بارکد دانلود</span>
           </button>
           <a
-            href={activeFile.directUrl || activeFile.url}
+            href={activeFile.url}
+            target="_blank"
+            rel="noopener noreferrer"
             download={activeFile.fileName}
-            className="py-2 px-3.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30 hover:bg-indigo-600 hover:text-white text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+            className="py-2 px-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/30"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>دانلود APK مشتری</span>
+            <span>دانلود APK مشتری از گیت‌هاب</span>
           </a>
         </div>
       </div>

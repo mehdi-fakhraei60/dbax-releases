@@ -1,6 +1,6 @@
 // Bax Service Worker for PWA Offline Availability & Instant Updates
-// Version 3 - Network-First for Navigation & HTML, Immediate cache invalidation
-const CACHE_NAME = 'bax-cache-v3-fresh';
+// Version 4 - Network-First for Navigation & HTML, Immediate cache invalidation (preview41)
+const CACHE_NAME = 'bax-cache-v4-preview41';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

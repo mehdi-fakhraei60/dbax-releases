@@ -28,21 +28,44 @@ export interface AppRelease {
   keyFeaturesFa: string[];
 }
 
+export interface GitHubReleaseItem {
+  tag: string;
+  version: string;
+  name: string;
+  date: string;
+  dateShamsi: string;
+  isLatest?: boolean;
+  htmlUrl: string;
+  customerUniversalUrl: string;
+  customerArm64Url: string;
+  driverUniversalUrl: string;
+  driverArm64Url: string;
+  customerUniversalSize: string;
+  customerArm64Size: string;
+  driverUniversalSize: string;
+  driverArm64Size: string;
+}
+
 export const CURRENT_RELEASE = {
-  version: '1.0.0-preview20',
-  versionCode: 20,
-  name: 'Bax 1.0.0 Preview 20',
+  version: '1.0.0-preview41',
+  versionCode: 41,
+  name: 'Bax 1.0.0 Preview 41',
   releaseDate: 'مهر ۱۴۰۳ / اکتبر ۲۰۲۴',
   repoUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases',
   author: 'mehdi-fakhraei60',
-  notesRaw: `## Bax 1.0.0 preview 20 (نسخه ۲۰)
+  notesRaw: `## Bax 1.0.0 preview 41 (نسخه ۴۱)
 
 Native Kotlin + Jetpack Compose و وب‌اپلیکیشن PWA. دو اپلیکیشن: **Bax مشتری** (\`ir.dbax.app\`) و **Bax کاپتان** (\`ir.dbax.app.driver\`).
 
-- **اولویت نخست انتخاب روی نقشه (Map-First)**: مبدا و مقصد مستقیماً روی نقشه تمام‌صفحه با ژئوکدینگ معکوس نشان انتخاب شده و آدرس‌های ذخیره‌شده به صورت اختیاری در دسترس هستند.
-- **فرآیند پرداخت منطقی**: پرداخت پس از رویت بسته و تحویل به کاپتان انجام می‌شود (نه قبل از اعزام).
-- **اتصال کاپتان آزمایشی**: شماره تایید شده ۰۹۳۹۹۸۸۷۷۸۲ به عنوان کاپتان فعال با کد CAP-9882 متصل به رادار دیسپچ زنده.
-- ارتقای کش سرویس‌ورکر به Network-First برای جلوگیری از تاخیر دریافت بروزرسانی‌ها روی گوشی‌های اندروید.`,
+- **اتصال مستقیم لینک‌های دانلود به مخزن رسمی گیت‌هاب**: دریافت بی‌واسطه و ۱۰۰٪ مستقیم فایل‌های باینری APK یونیورسال و ARM64 از GitHub Releases.
+- **آرشیو کامل نسخه‌ها در پنل سمت چپ**: دسترسی تک‌لمسی به دانلود مستقیم فایل‌های نصب نسخه‌های قبلی و جاری (preview41 تا preview21).
+- **فلو هوشمند تفکیک مبدا و مقصد**: انتخاب اول مبدا و فرستنده روی نقشه زنده، ثبت کامل و سپس ورود به مرحله مقصد و گیرنده.
+- **تسهیل حداکثری فلو با کلید جابجایی مبدا/مقصد (Swap ⇄)**: امکان معکوس کردن فوری مبدا و مقصد روی نقشه تعاملی نشان با یک لمس.
+- **انتخاب پرسرعت مقاصد پرتردد (Quick Chips)**: پیشنهاد مستقیم مقاصد پرتقاضا بدون نیاز به تایپ.
+- **کپی فوری کد تحویل ۴ رقمی**: کلید کپی تک‌لمسی و ارسال مستقیم پیامک کد تحویل به گیرنده مرسوله.
+- **مسیریابی زنده نشان و ویز برای کاپتان**: دسترسی مستقیم از صفحه در مسیر رسیدن به مبدا و مقصد به اپ‌های ناوبری.
+- **تایید آنی و بدون تاخیر کد تحویل کاپتان**: خودکارسازی بررسی کد امنیتی ۴ رقمی جهت اتمام سریع سفر.
+- پایداری کامل استایل، رنگ‌ها، هویت بصری و تم بدون هیچ‌گونه دستکاری در ظاهر اپلیکیشن.`,
 };
 
 export const APPS: AppRelease[] = [
@@ -52,37 +75,39 @@ export const APPS: AppRelease[] = [
     nameFa: 'باکس (مشتری)',
     role: 'customer',
     packageName: 'ir.dbax.app',
-    version: '1.0.0-preview20',
-    tag: 'v1.0.0-preview20',
-    releaseDate: '۱۴۰۳/۰۷/۲۳',
+    version: '1.0.0-preview41',
+    tag: 'v1.0.0-preview41',
+    releaseDate: '۱۴۰۳/۰۷/۲۶',
     taglineFa: 'سامانه هوشمند سفارش پیک موتوری، وانت و تحویل تضمینی کالا با نقشه تمام‌صفحه',
     taglineEn: 'Map-first on-demand parcel delivery, live tracking & guaranteed shipments',
     universalApk: {
       fileName: 'bax-customer.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer.apk',
-      directUrl: '/downloads/bax-customer.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer.apk',
+      directUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer.apk',
       arch: 'Universal (همه پردازنده‌ها)',
-      sizeEst: '۱۸.۸ مگابایت',
+      sizeEst: '۱۸.۱ مگابایت',
     },
     arm64Apk: {
       fileName: 'bax-customer-arm64.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-customer-arm64.apk',
-      directUrl: '/downloads/bax-customer-arm64.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer-arm64.apk',
+      directUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer-arm64.apk',
       arch: 'arm64-v8a (بهینه‌شده برای گوشی‌های مدرن)',
-      sizeEst: '۷.۸ مگابایت',
+      sizeEst: '۷.۶ مگابایت',
     },
     screenRange: 'C01 تا C38 + C07a/b/c',
     highlights: [
+      'اتصال مستقیم به لینک‌های باینری گیت‌هاب با قابلیت دانلود پایدار',
       'پیاده‌سازی تمام صفحات مشتری از C01 تا C38',
       'اندازه‌گیری ابعاد مرسوله با دوربین (C07a/b/c)',
-      'نقشه زنده نشان: جستجو، انتخاب مبدا/مقصد، ژئوکدینگ معکوس و مسیریابی',
+      'نقشه زنده نشان: جستجو، تفکیک گام‌به‌گام مبدا و مقصد، ژئوکدینگ معکوس',
       'رهگیری زنده حرکت سفیر روی نقشه',
       'ورود سریع با پیامک تایید (Kavenegar OTP)',
       'کیف پول درون‌برنامه‌ای، فاکتور رسمی و گزینه تحویل تضمینی',
       'سیستم به‌روزرسانی خودکار درون‌برنامه‌ای از مخزن رسمی',
     ],
     keyFeaturesFa: [
-      'ثبت سفارش آسان در چند مرحله با برآورد هوشمند قیمت',
+      'دانلود مستقیم و بدون واسطه از ریپازیتوری رسمی GitHub',
+      'ثبت سفارش آسان در دو مرحله شفاف مبدا و سپس مقصد با برآورد هوشمند قیمت',
       'محاسبه خودکار ابعاد و وزن بسته با دوربین گوشی',
       'پشتیبانی از چند مقصد و توقف در مسیر',
       'پرداخت از کیف پول، درگاه بانکی یا نقدی در محل',
@@ -94,27 +119,28 @@ export const APPS: AppRelease[] = [
     nameFa: 'باکس کاپتان (راننده / سفیر)',
     role: 'driver',
     packageName: 'ir.dbax.app.driver',
-    version: '1.0.0-preview20',
-    tag: 'v1.0.0-preview20',
-    releaseDate: '۱۴۰۳/۰۷/۲۳',
+    version: '1.0.0-preview41',
+    tag: 'v1.0.0-preview41',
+    releaseDate: '۱۴۰۳/۰۷/۲۶',
     taglineFa: 'اپلیکیشن اختصاصی کاپتان‌های حمل با کارمزد ۰٪ و درآمد ثابت شیفتی',
     taglineEn: 'Exclusive captain app with 0% commission and 8-hour fixed block earnings',
     universalApk: {
       fileName: 'bax-driver.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-driver.apk',
-      directUrl: '/downloads/bax-driver.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver.apk',
+      directUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver.apk',
       arch: 'Universal (همه پردازنده‌ها)',
-      sizeEst: '۱۸.۸ مگابایت',
+      sizeEst: '۱۸.۱ مگابایت',
     },
     arm64Apk: {
       fileName: 'bax-driver-arm64.apk',
-      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview20/bax-driver-arm64.apk',
-      directUrl: '/downloads/bax-driver-arm64.apk',
+      url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver-arm64.apk',
+      directUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver-arm64.apk',
       arch: 'arm64-v8a (بهینه‌شده برای گوشی‌های مدرن)',
-      sizeEst: '۷.۸ مگابایت',
+      sizeEst: '۷.۶ مگابایت',
     },
     screenRange: 'D00 تا D38',
     highlights: [
+      'دانلود مستقیم APK کاپتان از گیت‌هاب با یک کلیک',
       'پیاده‌سازی کامل تمام صفحات سفیر از D00 تا D38',
       'مدل اقتصادی انقلابی: ۰٪ کارمزد کمیسیون از سفرها',
       'درآمد تضمینی ثابت برای هر بلوک کاری ۸ ساعته + اشتراک ماهانه',
@@ -124,11 +150,144 @@ export const APPS: AppRelease[] = [
       'به‌روزرسانی مستقیم از مخزن عمومی گیت‌هاب',
     ],
     keyFeaturesFa: [
+      'اتصال مستقیم به فایل‌های Release در سرورهای امن GitHub',
       'درآمد ۱۰۰٪ متعلق به خود سفیر بدون کسر درصد از سفرها',
       'انتخاب شیفت‌های دلخواه ۸ ساعته با پرداختی تضمین‌شده',
       'اعلان‌های صوتی و لرزشی فوق سریع برای درخواست‌های سفر',
       'احراز هویت سریع با کاوه‌نگار و فعال‌سازی آسان مدارک',
     ],
+  },
+];
+
+export const GITHUB_RELEASES_ARCHIVE: GitHubReleaseItem[] = [
+  {
+    tag: 'v1.0.0-preview41',
+    version: '1.0.0-preview41',
+    name: 'Bax 1.0.0-preview41 (آخرین نسخه)',
+    date: '2026-10-17',
+    dateShamsi: '۱۴۰۳/۰۷/۲۶',
+    isLatest: true,
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview41',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۱ MB',
+    customerArm64Size: '۷.۶ MB',
+    driverUniversalSize: '۱۸.۱ MB',
+    driverArm64Size: '۷.۶ MB',
+  },
+  {
+    tag: 'v1.0.0-preview40',
+    version: '1.0.0-preview40',
+    name: 'Bax 1.0.0-preview40',
+    date: '2026-10-16',
+    dateShamsi: '۱۴۰۳/۰۷/۲۵',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview40',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview40/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview40/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview40/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview40/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۱ MB',
+    customerArm64Size: '۷.۵ MB',
+    driverUniversalSize: '۱۸.۱ MB',
+    driverArm64Size: '۷.۵ MB',
+  },
+  {
+    tag: 'v1.0.0-preview39',
+    version: '1.0.0-preview39',
+    name: 'Bax 1.0.0-preview39',
+    date: '2026-10-16',
+    dateShamsi: '۱۴۰۳/۰۷/۲۵',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview39',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview39/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview39/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview39/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview39/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۱ MB',
+    customerArm64Size: '۷.۵ MB',
+    driverUniversalSize: '۱۸.۱ MB',
+    driverArm64Size: '۷.۵ MB',
+  },
+  {
+    tag: 'v1.0.0-preview38',
+    version: '1.0.0-preview38',
+    name: 'Bax 1.0.0-preview38',
+    date: '2026-10-15',
+    dateShamsi: '۱۴۰۳/۰۷/۲۴',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview38',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview38/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview38/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview38/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview38/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۱ MB',
+    customerArm64Size: '۷.۵ MB',
+    driverUniversalSize: '۱۸.۱ MB',
+    driverArm64Size: '۷.۵ MB',
+  },
+  {
+    tag: 'v1.0.0-preview37',
+    version: '1.0.0-preview37',
+    name: 'Bax 1.0.0-preview37',
+    date: '2026-10-15',
+    dateShamsi: '۱۴۰۳/۰۷/۲۴',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview37',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview37/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview37/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview37/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview37/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۱ MB',
+    customerArm64Size: '۷.۵ MB',
+    driverUniversalSize: '۱۸.۱ MB',
+    driverArm64Size: '۷.۵ MB',
+  },
+  {
+    tag: 'v1.0.0-preview36',
+    version: '1.0.0-preview36',
+    name: 'Bax 1.0.0-preview36',
+    date: '2026-10-15',
+    dateShamsi: '۱۴۰۳/۰۷/۲۴',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview36',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview36/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview36/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview36/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview36/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۱ MB',
+    customerArm64Size: '۷.۵ MB',
+    driverUniversalSize: '۱۸.۱ MB',
+    driverArm64Size: '۷.5 MB',
+  },
+  {
+    tag: 'v1.0.0-preview30',
+    version: '1.0.0-preview30',
+    name: 'Bax 1.0.0-preview30',
+    date: '2026-10-14',
+    dateShamsi: '۱۴۰۳/۰۷/۲۳',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview30',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview30/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview30/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview30/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview30/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۰ MB',
+    customerArm64Size: '۷.۵ MB',
+    driverUniversalSize: '۱۸.۰ MB',
+    driverArm64Size: '۷.۵ MB',
+  },
+  {
+    tag: 'v1.0.0-preview21',
+    version: '1.0.0-preview21',
+    name: 'Bax 1.0.0-preview21',
+    date: '2026-10-14',
+    dateShamsi: '۱۴۰۳/۰۷/۲۳',
+    htmlUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/tag/v1.0.0-preview21',
+    customerUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview21/bax-customer.apk',
+    customerArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview21/bax-customer-arm64.apk',
+    driverUniversalUrl: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview21/bax-driver.apk',
+    driverArm64Url: 'https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview21/bax-driver-arm64.apk',
+    customerUniversalSize: '۱۸.۸ MB',
+    customerArm64Size: '۷.۸ MB',
+    driverUniversalSize: '۱۸.۸ MB',
+    driverArm64Size: '۷.۸ MB',
   },
 ];
 

@@ -2,51 +2,51 @@
   "schemaVersion": 1,
   "appId": "ir.dbax.app",
   "appName": "Bax",
-  "latestVersion": "1.0.0-preview20",
-  "versionCode": 20,
+  "latestVersion": "1.0.0-preview41",
+  "versionCode": 41,
   "minSupportedVersionCode": 1,
   "forceUpdate": false,
-  "releaseDate": "2024-10-14",
-  "releaseDateShamsi": "۱۴۰۳/۰۷/۲۳",
+  "releaseDate": "2024-10-17",
+  "releaseDateShamsi": "۱۴۰۳/۰۷/۲۶",
   "repo": "https://github.com/mehdi-fakhraei60/dbax-releases",
   "artifacts": {
     "customer": {
       "packageName": "ir.dbax.app",
       "universal": {
         "fileName": "bax-customer.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer.apk",
         "arch": "universal",
-        "sizeEst": "35.8 MB"
+        "sizeEst": "18.1 MB"
       },
       "arm64": {
         "fileName": "bax-customer-arm64.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-customer-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-customer-arm64.apk",
         "arch": "arm64-v8a",
-        "sizeEst": "28.1 MB"
+        "sizeEst": "7.6 MB"
       }
     },
     "driver": {
       "packageName": "ir.dbax.app.driver",
       "universal": {
         "fileName": "bax-driver.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-driver.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver.apk",
         "arch": "universal",
-        "sizeEst": "33.9 MB"
+        "sizeEst": "18.1 MB"
       },
       "arm64": {
         "fileName": "bax-driver-arm64.apk",
-        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/latest/download/bax-driver-arm64.apk",
+        "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview41/bax-driver-arm64.apk",
         "arch": "arm64-v8a",
-        "sizeEst": "26.3 MB"
+        "sizeEst": "7.6 MB"
       }
     }
   },
   "changelog": [
-    "اولویت نخست انتخاب مستقیم مبدا و مقصد روی نقشه تعاملی نشان (Map-First) با ژئوکدینگ معکوس خودکار",
-    "امکان استفاده اختیاری از آدرس‌های ذخیره‌شده و شعب به درخواست کاربر (نه اجباری)",
-    "اصلاح فرآیند مالی: درخواست پیک بدون پرداخت اولیه، پرداخت پس از رویت بسته و تحویل به کاپتان",
-    "تغییر عنوان رسمی از سفیر به کاپتان و فعال‌سازی شماره تست ۰۹۳۹۹۸۸۷۷۸۲ (کد CAP-9882)",
-    "اتصال رادار اعزام هوشمند بین اپ مشتری و اپ کاپتان به صورت دیسپچ لحظه‌ای",
-    "ارتقای ساختار وب‌اپ و PWA اندروید به Network-First جهت ابطال فوری کش نسخه‌های قبلی"
+    "تسهیل و تسریع حداکثری فلوهای سفارش کاربر و کاپتان بدون هیچ‌گونه تغییر در تم یا ساختار بصری",
+    "افزودن دکمه تک‌لمسی جابجایی مبدا و مقصد روی نقشه تعاملی نشان (Swap ⇄)",
+    "چیپ‌های دسترسی سریع به مقاصد پرتردد (بازار بزرگ، ولیعصر، مهرآباد، سعادت‌آباد)",
+    "دکمه کپی فوری کد امنیتی تحویل ۴ رقمی و اشتراک پیامکی مستقیم به گیرنده مرسوله",
+    "افزودن کلیدهای ناوبری زنده مستقیم کاپتان به نشان، ویز و مپ به همراه تایید آنی کد تحویل",
+    "به‌روزرسانی کش شبکه Network-First سرویس‌ورکر PWA به نسخه bax-cache-v4-preview21"
   ]
 }

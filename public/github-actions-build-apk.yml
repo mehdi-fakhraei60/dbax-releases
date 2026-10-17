@@ -1,0 +1,87 @@
+name: Build & Publish Bax Android APKs
+
+on:
+  push:
+    tags:
+      - 'v*' # اجرای خودکار هنگام ثبت تگ نسخه جدید (مثل v1.0.0-preview42)
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'نام نسخه برای انتشار (مثال: v1.0.0-preview42)'
+        required: true
+        default: 'v1.0.0-preview42'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build APKs on Ubuntu Runner
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Android Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 2. Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 3. Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 4. Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: 5. Build Android Release APKs
+        run: |
+          ./gradlew assembleRelease --stacktrace
+
+      - name: 6. Locate & Prepare APK Artifacts
+        id: prepare_apks
+        run: |
+          mkdir -p release-artifacts
+          
+          # جستجو و نام‌گذاری استاندارد فایل‌های APK بیلد شده
+          find . -name "*.apk" -type f
+          
+          # کپی فایل‌های اصلی با اسامی استاندارد
+          find . -path "*/build/outputs/apk/*" -name "*customer*universal*.apk" -exec cp {} release-artifacts/bax-customer.apk \; || true
+          find . -path "*/build/outputs/apk/*" -name "*customer*arm64*.apk" -exec cp {} release-artifacts/bax-customer-arm64.apk \; || true
+          find . -path "*/build/outputs/apk/*" -name "*driver*universal*.apk" -exec cp {} release-artifacts/bax-driver.apk \; || true
+          find . -path "*/build/outputs/apk/*" -name "*driver*arm64*.apk" -exec cp {} release-artifacts/bax-driver-arm64.apk \; || true
+          
+          # حالت پشتیبان: در صورت نام‌گذاری پیش‌فرض Gradle (app-release.apk)
+          if [ ! -f release-artifacts/bax-customer.apk ]; then
+            find . -name "*release*.apk" -not -name "*unaligned*" | head -n 1 | xargs -I {} cp {} release-artifacts/bax-customer.apk || true
+          fi
+          
+          ls -la release-artifacts/
+
+      - name: 7. Create GitHub Release & Upload APKs
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: ${{ github.ref_name || inputs.version_name }}
+          name: Bax Release ${{ github.ref_name || inputs.version_name }}
+          draft: false
+          prerelease: true
+          files: |
+            release-artifacts/*.apk
+          body: |
+            ## نسخه جدید Bax (${{ github.ref_name || inputs.version_name }})
+            
+            کامپایل خودکار توسط GitHub Actions CI/CD Pipeline.
+            
+            ### فایل‌های نصب مستقیم:
+            - **Bax Customer (مشتری)**: `bax-customer.apk`
+            - **Bax Customer ARM64**: `bax-customer-arm64.apk`
+            - **Bax Driver (کاپتان)**: `bax-driver.apk`
+            - **Bax Driver ARM64**: `bax-driver-arm64.apk`
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

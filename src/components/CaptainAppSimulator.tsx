@@ -19,7 +19,11 @@ import {
   Send,
   Radio,
   ExternalLink,
-  Volume2
+  Volume2,
+  QrCode,
+  Mic,
+  Compass,
+  X
 } from 'lucide-react';
 import {
   CaptainDispatchBridge,
@@ -36,15 +40,42 @@ export const CaptainAppSimulator: React.FC = () => {
   const [securityError, setSecurityError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'radar' | 'earnings' | 'profile'>('radar');
 
+  // New Operational Enhancements
+  const [autoAcceptEnabled, setAutoAcceptEnabled] = useState(false);
+  const [isPlayingCustomerVoice, setIsPlayingCustomerVoice] = useState(false);
+  const [showCaptainQr, setShowCaptainQr] = useState(false);
+  const [chainedTripReserved, setChainedTripReserved] = useState(false);
+
   useEffect(() => {
     const unsubscribe = CaptainDispatchBridge.subscribe((trip) => {
       setActiveTrip(trip);
       if (trip && trip.status === 'searching') {
         SoundEffects.playPop();
+        if (autoAcceptEnabled) {
+          setTimeout(() => {
+            CaptainDispatchBridge.acceptTrip(trip.id, captain);
+            SoundEffects.playSuccess();
+          }, 1800);
+        }
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [autoAcceptEnabled, captain]);
+
+  const handleOpenNavApp = (type: 'neshan' | 'balad', lat: number = 35.7005, lng: number = 51.3912) => {
+    SoundEffects.playPop();
+    const url =
+      type === 'neshan'
+        ? `https://neshan.org/maps/@${lat},${lng},16z`
+        : `https://balad.ir/location?latitude=${lat}&longitude=${lng}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handlePlayCustomerVoice = () => {
+    setIsPlayingCustomerVoice(true);
+    SoundEffects.playChime();
+    setTimeout(() => setIsPlayingCustomerVoice(false), 2500);
+  };
 
   const handleToggleOnline = () => {
     const nextState = !captain.isOnline;
@@ -247,18 +278,37 @@ export const CaptainAppSimulator: React.FC = () => {
             </div>
           </div>
 
-          {/* Online / Offline Toggle */}
-          <button
-            onClick={handleToggleOnline}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow ${
-              captain.isOnline
-                ? 'bg-emerald-600 text-white shadow-emerald-600/30'
-                : 'bg-rose-950 text-rose-300 border border-rose-800'
-            }`}
-          >
-            <Power className="w-3.5 h-3.5" />
-            <span>{captain.isOnline ? 'آنلاین' : 'آفلاین'}</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            {/* Auto-Accept Hands-free Toggle */}
+            <button
+              onClick={() => {
+                setAutoAcceptEnabled(!autoAcceptEnabled);
+                SoundEffects.playPop();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-xl text-[10px] font-bold transition-all border ${
+                autoAcceptEnabled
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-400 shadow-sm'
+                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+              }`}
+              title="پذیرش خودکار سفارشات در حالت دستکش و رانندگی"
+            >
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>{autoAcceptEnabled ? 'خودکار' : 'دستی'}</span>
+            </button>
+
+            {/* Online / Offline Toggle */}
+            <button
+              onClick={handleToggleOnline}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow ${
+                captain.isOnline
+                  ? 'bg-emerald-600 text-white shadow-emerald-600/30'
+                  : 'bg-rose-950 text-rose-300 border border-rose-800'
+              }`}
+            >
+              <Power className="w-3.5 h-3.5" />
+              <span>{captain.isOnline ? 'آنلاین' : 'آفلاین'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Main Body Area */}
@@ -431,6 +481,28 @@ export const CaptainAppSimulator: React.FC = () => {
                       </a>
                     </div>
 
+                    {/* Quick Live Navigation Launchers */}
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                      <a
+                        href="https://neshan.org/maps/@35.7005,51.3912,16z"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2 px-2 rounded-xl bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-300 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
+                      >
+                        <Navigation className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>مسیریابی نشان</span>
+                      </a>
+                      <a
+                        href="https://waze.com/ul?ll=35.7005,51.3912&navigate=yes"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2 px-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                        <span>ویز / گوگل</span>
+                      </a>
+                    </div>
+
                     <button
                       onClick={handleArrivedAtPickup}
                       className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-1.5"
@@ -532,6 +604,28 @@ export const CaptainAppSimulator: React.FC = () => {
                       </div>
                     </div>
 
+                    {/* Quick Live Navigation Launchers to Destination */}
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                      <a
+                        href="https://neshan.org/maps/@35.6762,51.4244,16z"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2 px-2 rounded-xl bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-300 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
+                      >
+                        <Navigation className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>مسیریابی به مقصد (نشان)</span>
+                      </a>
+                      <a
+                        href="https://waze.com/ul?ll=35.6762,51.4244&navigate=yes"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2 px-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                        <span>ویز / گوگل</span>
+                      </a>
+                    </div>
+
                     {/* Security Code Input */}
                     <div className="space-y-1.5 pt-2">
                       <label className="text-[11px] font-bold text-white block">
@@ -542,15 +636,36 @@ export const CaptainAppSimulator: React.FC = () => {
                           type="text"
                           maxLength={4}
                           value={securityInput}
-                          onChange={(e) => setSecurityInput(e.target.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setSecurityInput(val);
+                            if (val === '4892') {
+                              const res = CaptainDispatchBridge.completeDelivery(activeTrip.id, '4892');
+                              if (res.success) {
+                                setSecurityError(null);
+                                SoundEffects.playSuccess();
+                              }
+                            }
+                          }}
                           placeholder="کد ۴ رقمی (مثلا ۴۸۹۲)"
                           className="flex-1 py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-center font-mono text-base text-white tracking-widest focus:border-indigo-500 outline-none"
                         />
                         <button
-                          onClick={() => setSecurityInput('4892')}
-                          className="px-2.5 py-2 rounded-xl bg-slate-800 text-[10px] text-slate-300 hover:text-white"
+                          onClick={() => {
+                            setSecurityInput('4892');
+                            const res = CaptainDispatchBridge.completeDelivery(activeTrip.id, '4892');
+                            if (!res.success) {
+                              setSecurityError(res.errorFa || 'کد امنیتی نادرست است');
+                              SoundEffects.playAlert();
+                            } else {
+                              setSecurityError(null);
+                              SoundEffects.playSuccess();
+                            }
+                          }}
+                          className="px-2.5 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600 border border-emerald-500/40 text-[10px] text-emerald-300 hover:text-white font-bold transition-all"
+                          title="تایید فوری کد ۴ رقمی و پایان سفر"
                         >
-                          کد پیش‌فرض ۴۸۹۲
+                          تایید سریع ۴۸۹۲ ⚡
                         </button>
                       </div>
                       {securityError && (
