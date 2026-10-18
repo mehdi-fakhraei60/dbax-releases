@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "appId": "ir.dbax.app",
   "appName": "Bax",
-  "latestVersion": "1.0.0-preview45",
-  "versionCode": 45,
+  "latestVersion": "1.0.0-preview46",
+  "versionCode": 46,
   "minSupportedVersionCode": 1,
   "forceUpdate": false,
   "releaseDate": "2026-10-18",
@@ -12,19 +12,19 @@
   "artifacts": {
     "customer": {
       "packageName": "ir.dbax.app",
-      "universal": { "fileName": "bax-customer.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview45/bax-customer.apk", "arch": "universal", "sizeEst": "18.1 MB" },
-      "arm64": { "fileName": "bax-customer-arm64.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview45/bax-customer-arm64.apk", "arch": "arm64-v8a", "sizeEst": "7.6 MB" }
+      "universal": { "fileName": "bax-customer.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview46/bax-customer.apk", "arch": "universal", "sizeEst": "18.1 MB" },
+      "arm64": { "fileName": "bax-customer-arm64.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview46/bax-customer-arm64.apk", "arch": "arm64-v8a", "sizeEst": "7.6 MB" }
     },
     "driver": {
       "packageName": "ir.dbax.app.driver",
-      "universal": { "fileName": "bax-driver.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview45/bax-driver.apk", "arch": "universal", "sizeEst": "18.1 MB" },
-      "arm64": { "fileName": "bax-driver-arm64.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview45/bax-driver-arm64.apk", "arch": "arm64-v8a", "sizeEst": "7.6 MB" }
+      "universal": { "fileName": "bax-driver.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview46/bax-driver.apk", "arch": "universal", "sizeEst": "18.1 MB" },
+      "arm64": { "fileName": "bax-driver-arm64.apk", "url": "https://github.com/mehdi-fakhraei60/dbax-releases/releases/download/v1.0.0-preview46/bax-driver-arm64.apk", "arch": "arm64-v8a", "sizeEst": "7.6 MB" }
     }
   },
   "changelog": [
-    "بدون پیش‌فرض: فقط «مبدأ» اول نمایش داده می‌شود و مقصد تا تأیید فرستنده مخفی است",
-    "انتخاب مبدأ از نقشه (ضربه)، «موقعیت من» (GPS) یا ذخیره‌شده‌ها",
-    "بعد از تأیید اطلاعات فرستنده، «مقصد» نمایش داده می‌شود",
-    "جریان بعدی (مقصد ← گیرنده ← کالا ← قیمت ← ثبت سفارش) بدون تغییر"
+    "نقشه مبدأ خودکار باز می‌شود؛ «مبدأ» یک‌ضربه‌ای مستقیم به نقشه می‌رود",
+    "اطلاعات فرستنده از قبل با «خودم» پر می‌شود — فقط تأیید",
+    "چیپ‌های سریع گیرنده‌های ذخیره‌شده در فرم گیرنده",
+    "خانه: دکمه «ارسال» به‌جای «قیمت بگیر»؛ حذف ردیف آدرس از کارت"
   ]
 }
